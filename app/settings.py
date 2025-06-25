@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-m3$a_r*pn-%3-39#bh#ag3nt*ox6v9&kihn6%+%kty!6v(98-x'
 DEBUG = False
 ALLOWED_HOSTS = ["*"]
-CSRF_TRUSTED_ORIGINS = ["http://192.168.0.237", "http://192.168.0.237:8000", "https://raizcom.duckdns.org", "http://192.168.1.4:8000", "https://192.168.1.4"]
+CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:8000"]
 DEFAULT_DOMAIN = 'http://{}'.format(ALLOWED_HOSTS[0])
 
 INSTALLED_APPS = [
