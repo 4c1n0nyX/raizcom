@@ -1,0 +1,9 @@
+Django
+channels
+channels-redis
+daphne
+Pillow
+mysqlclient
+django-cors-headers
+requests
+weasyprint
