@@ -1,0 +1,6 @@
+Django
+channels
+channels-redis
+daphne
+Pillow
+mysqlclient
