@@ -20,7 +20,6 @@ INSTALLED_APPS = [
     'usuarios',
     'agenda',
     'publicaciones',
-    'solicitudes',
     'servicios',
     'chat',
     'channels',
