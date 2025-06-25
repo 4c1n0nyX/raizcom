@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>REPORTE_RECURSOS_REALIZADOS_RAICES_FUNDAMENTALES</title>
+    <style>
+        @page {
+            size: Legal landscape;
+            margin: 0;
+            padding-top: 30px;
+            padding-bottom: 30px;
+        }
+        @page:first {
+            @bottom-center {
+                content: none;
+            }
+        }
+
+        body {
+            font-family: 'Liberation Sans', sans-serif;
+            background: url("{% static 'img/fondo_historico.png' %}") no-repeat center fixed;
+            background-size: 1350px 820px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .negrita{
+            font-family: 'Liberation Bold';
+            color: #004586;
+            font-size: 20px;
+        }
+
+        .negrita2{
+            font-family: 'Liberation Bold';
+        }
+
+        .content {
+            margin-left: 70px;
+            margin-right: 70px;
+            z-index: 1;
+            page-break-before: avoid;
+            counter-increment: page;
+            align-content: justify;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        td {
+            border: 1px solid black; 
+            padding: 5px;
+            text-align: center; 
+        }
+
+        .titulo{
+            font-family: 'Liberation 2', sans-serif;
+            color: #0c3663;
+            font-size: 22px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="content">
+        <div style="text-align: center;">
+            <img src="{% static 'img/LOGO.png' %}" style="width: 100px;">
+            <h4 class="titulo">REPORTE DE RECURSOS GESTIONADOS EN LA COMUNIDAD RAICES FUNDAMENTALES</h4>
+        </div>
+        <table border="1">
+            <tr>
+                <td style="background-color: #004586; color: white; font-size: 11px; width: 10px;" class="negrita">#</td>
+                <td style="background-color: #004586; color: white; font-size: 11px; width: 270px;" class="negrita">Tipo de Recurso</td>
+                <td style="background-color: #004586; color: white; font-size: 11px; width: 270px;" class="negrita">Fecha</td>
+                <td style="background-color: #004586; color: white; font-size: 11px; width: 250px;" class="negrita">Lugar</td>
+                <td style="background-color: #004586; color: white; font-size: 11px; width: 250px;" class="negrita">Precio</td>
+            </tr>
+            {% if resultados|length > 0 %}
+                {% for resultado in resultados %}
+                    <tr>
+                        <td style="color: black; font-size: 11px; width: 10px;">{{ forloop.counter }}</td>
+                        <td style="color: black; font-size: 11px; width: 270px;">{{ resultado.tipo_recurso }}</td>
+                        <td style="color: black; font-size: 11px; width: 270px;">{{ resultado.fecha|date:"d/m/Y" }}</td>
+                        <td style="color: black; font-size: 11px; width: 270px;">{{ resultado.lugar }}</td>
+                        {% if resultado.precio %}
+                            <td style="color: black; font-size: 11px; width: 270px;">{{ resultado.precio }}</td>
+                        {% else %}
+                            <td style="color: black; font-size: 11px; width: 270px;">N/A</td>
+                        {% endif %}
+                    </tr>
+                    {% if resultado.pago == True %}
+                        <tr>
+                            <td colspan="5" align="justify">
+                                {% if resultado.recursos_pagos_relacionados %}
+                                    <p style="font-size: 10px; font-weight: bold;">PAGOS REGISTRADOS:</p>
+                                    {% for user in resultado.recursos_pagos_relacionados %}
+                                        <p style="font-size: 10px;">{{ user.usuario }} - {{ user.cedula }} - {{ user.fechap|date:"d/m/Y" }}</p>
+                                    {% endfor %}
+                                {% else %}
+                                    <p style="font-size: 10px;">NO EXISTEN PAGOS REGISTRADOS</p>
+                                {% endif %}
+                            </td>  
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6" style="height: 100px; font-size: 15px;" class="negrita2">NO HAY DATA REGISTRADA</td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>
+</body>
+</html>
+

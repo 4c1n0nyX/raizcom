@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+    <!-- ======================= Cabecera ================== -->
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>RAIZCOM</title>
+        <link rel="manifest" href="{% static 'manifest.json' %}">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon" href="{% static '/img/icon-192x192.png' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+        <link rel="icon" type="image/x-icon" href="{% static '/img/LOGO_ICON.png' %}">
+    </head>
+    <!-- ======================= LOGIN ================== -->
+    <body>
+        <div class="caja">
+            <span class="bg-animate"></span>
+            <img class="logo" style="width:200px; height: 200px;" src="{% static 'img/LOGO.png' %}">
+            <div class="form-caja login">
+                <h2>Error de Inicio de Sesión</h2>
+                <br>
+                <div class="boton-atras" align="center">
+                    <a href="../login/">Volver atrás</a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

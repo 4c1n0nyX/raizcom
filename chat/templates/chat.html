@@ -1,0 +1,369 @@
+{% extends 'success.html' %}
+{% block success %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <!-- =============== Cabeceras ================ -->		
+    <head>
+		<meta charset="UTF-8">
+ 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>RAIZCOM | {{ other_user.nombre }} {{ other_user.apellido }}</title>
+  		<link rel="manifest" href="{% static 'manifest.json' %}">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon" href="{% static '/img/icon-192x192.png' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+        <link rel="icon" type="image/x-icon" href="{% static '/img/LOGO_ICON.png' %}">
+	</head>
+    <body>
+        <!-- =============== Menú principal ================ -->
+        <div class="sidebuton" id="sidebuton">
+            <i class="fa-solid fa-circle-chevron-down"></i>
+        </div>
+        <div class="sidebar" id="sidebar">
+            <div class="logo"></div>
+            <ul class="menu">
+                <li class="active">
+                    <a href="#">
+                        <img style="width:35px; height: 35px;" src="{% static 'img/LOGO_ICON.png' %}">
+                        <span class="title" style="color: #ffffff;"><strong>RAIZCOM</strong></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../../">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Volver</span>
+                    </a>
+                </li>
+                <hr style="border: #b4baca solid 1px;">
+                <li>
+                    <a href="../../chat/">
+                        <i class="fa-solid fa-comment-dots"></i>
+                        <span>Chat General</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../../chat/alertas/">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>Alerta de Emergencias</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../../chat/grecursos/">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                        <span>Gestión de Recursos</span>
+                    </a>
+                </li>
+                <hr style="border: #b4baca solid 1px;">
+                {% for contact in contactos %}
+                    {% if contact.status == 'accepted' %}
+                        <li>
+                            <a href="../{{ contact.contact_user.pk }}">
+                                {% if contact.contact_user.foto %}
+                                    <img src="{{ contact.contact_user.foto.url }}" style="width: 25px; height: 25px; border-radius: 25px; border: 2px solid rgb(255, 255, 255);">
+                                {% else %}
+                                    <i class="fa-solid fa-user" style="width: 20px;"></i>
+                                {% endif %}
+                                <span>{{ contact.contact_user.first_name }} {{ contact.contact_user.last_name }}</span>
+                            </a>
+                        </li>
+                    {% endif %}    
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- ========================= Menú usuario ==================== -->
+        <div class="main--content">
+            <div class="header--wrapper">
+                <div class="header--title">
+                    <h2>RAIZCOM | Chat</h2>
+                </div>
+                <div class="user--info">
+                    <a href="../../usuario/" class="user--link">
+                        <div class="box">
+                            {% if request.user.foto %}
+                                <img src="{{ request.user.foto.url }}">
+                            {% else %}
+                                <i class="fa-solid fa-circle-user"></i>
+                            {% endif %}
+                            <h3>{{request.user.first_name}} {{request.user.last_name}}</h3>
+                        </div>
+                    </a>
+                    |
+                    <li class="butun">
+                        <a href="{% url 'logout' %}" style="text-decoration: none;">
+                            <label class="switch">
+                                <i class="fa-solid fa-power-off" style="color: #030c1c;"></i>
+                            </label>
+                        </a>
+                    </li>
+                </div>
+            </div>
+            <!-- ===================== CHAT ====================  -->
+            <div class="tabular--wrapper2">
+                <div class="table-container2">
+                    <div id="chat-container">
+                        <div id="chat-header">
+                            <h1>Chat con {{ other_user.first_name }} {{ other_user.last_name }}</h1>
+                        </div>
+                        <div id="chat-log">
+                            <div id="new-message-indicator" style="display: none; text-align: center; padding: 5px; background: #fffae6; color: #333; cursor: pointer;">
+                                ⬇ Hay nuevos mensajes
+                            </div>
+                        </div>
+                        <div class="chat-input-area" id="chat-input-area">
+                            <div id="emoji-picker-container" style="position: relative;">
+                                <div style="display: flex; align-items: center;">
+                                    <button id="emoji-toggle-button" class="emoji-button">😊</button>
+                                </div>
+                                <div id="emoji-list" style="display: none; position: absolute; bottom: 40px; left: 0; background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 10;">
+                                    <span class="emoji-option">😄</span>
+                                    <span class="emoji-option">🔥</span>
+                                    <span class="emoji-option">👌</span>
+                                    <span class="emoji-option">❤️</span>
+                                    <span class="emoji-option">💡</span>
+                                </div>
+                            </div>
+                            <input id="chat-message-input" type="text" placeholder="Escribe un mensaje...">
+                            <button id="chat-message-submit">Enviar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========== Script CHAT =========  -->
+        <script>
+            const roomId = {{ chat_room_id|default:"null" }};
+            const currentUsername = "{{ request.user.username }}";
+
+            const initialMessages = [
+                {% for message in messages %}
+                    {
+                        "sender_username": "{{ message.sender.username|escapejs }}",
+                        "sender_full_name": "{{ message.sender.first_name|default:'' }} {{ message.sender.last_name|default:'' }}",
+                        "content": "{{ message.content|escapejs }}",
+                        "timestamp": "{{ message.timestamp|date:'c' }}"
+                    }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ];
+
+            console.log("DEBUG: initialMessages loaded:", initialMessages);
+
+            function formatDateDivider(date) {
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                return new Date(date).toLocaleDateString('es-ES', options);
+            }
+
+            function formatMessageTime(date) {
+                return new Date(date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            }
+
+            let lastMessageDate = '';
+
+            function addMessageToLog(messageContent, senderFullName, senderUsername, messageTimestamp) {
+                const chatLog = document.getElementById('chat-log');
+                const newMsgIndicator = document.getElementById('new-message-indicator');
+
+                function showNewMessageIndicator() {
+                    if (newMsgIndicator.style.display !== 'block') {
+                        newMsgIndicator.style.display = 'block';
+                        newMsgIndicator.classList.remove('fade-refresh');
+                        void newMsgIndicator.offsetWidth;
+                        newMsgIndicator.classList.add('fade-refresh');
+                    }
+                }
+
+
+                function isScrolledToBottom() {
+                    return chatLog.scrollHeight - chatLog.scrollTop <= chatLog.clientHeight + 10;
+                }
+
+                chatLog.addEventListener('scroll', () => {
+                    if (isScrolledToBottom()) {
+                        newMsgIndicator.style.display = 'none';
+                    }
+                });
+
+                newMsgIndicator.addEventListener('click', () => {
+                    chatLog.scrollTop = chatLog.scrollHeight;
+                    newMsgIndicator.style.display = 'none';
+                });
+
+                const messageDate = new Date(messageTimestamp).toISOString().split('T')[0];
+                const formattedDate = formatDateDivider(messageTimestamp);
+                const formattedTime = formatMessageTime(messageTimestamp);
+                const displayName = senderFullName.trim() !== "" ? senderFullName : senderUsername;
+
+                let dayGroup = chatLog.querySelector(`.day-group[data-date="${messageDate}"]`);
+
+                if (!dayGroup) {
+                    dayGroup = document.createElement('div');
+                    dayGroup.classList.add('day-group');
+                    dayGroup.setAttribute('data-date', messageDate);
+
+                    const dateDivider = document.createElement('div');
+                    dateDivider.classList.add('date-divider');
+                    dateDivider.innerHTML = `<span>${formattedDate}</span>`;
+
+                    dayGroup.appendChild(dateDivider);
+                    chatLog.appendChild(dayGroup);
+                }
+
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message-box');
+                messageElement.setAttribute('data-timestamp', messageTimestamp);
+
+                messageElement.classList.add(senderUsername === currentUsername ? 'sent' : 'received');
+                messageElement.innerHTML = `<strong>${displayName}:</strong> <p>${messageContent}</p><small>(${formattedTime})</small>`;
+
+                dayGroup.appendChild(messageElement);
+                
+                if (!isScrolledToBottom()) {
+                    showNewMessageIndicator();
+                } else {
+                    newMsgIndicator.style.display = 'none';
+                    chatLog.scrollTop = chatLog.scrollHeight;
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', (event) => {
+                console.log('DEBUG: DOMContentLoaded fired. All HTML parsed.');
+
+                const messageInput = document.getElementById('chat-message-input');
+                const submitButton = document.getElementById('chat-message-submit');
+                const chatLog = document.getElementById('chat-log');
+
+                const emojiToggleButton = document.getElementById('emoji-toggle-button');
+                const emojiList = document.getElementById('emoji-list');
+                const emojiOptions = document.querySelectorAll('.emoji-option');
+
+                emojiToggleButton.addEventListener('click', () => {
+                    emojiList.style.display = emojiList.style.display === 'none' ? 'block' : 'none';
+                });
+
+                emojiOptions.forEach(emoji => {
+                    emoji.addEventListener('click', () => {
+                        messageInput.value += emoji.textContent;
+                        messageInput.focus();
+                        emojiList.style.display = 'none';
+                    });
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!emojiList.contains(e.target) && !emojiToggleButton.contains(e.target)) {
+                        emojiList.style.display = 'none';
+                    }
+                });
+
+                if (roomId === null || isNaN(roomId) || roomId === '') {
+                    console.error("Error: chat_room_id no es un número válido. El chat no se conectará.");
+                    if (messageInput) messageInput.disabled = true;
+                    if (submitButton) submitButton.disabled = true;
+                    if (chatLog) chatLog.innerHTML = '<p style="text-align: center; color: red;">Error al cargar el chat. Por favor, recargue la página.</p>';
+                } else {
+                    const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+                    const websocketUrl = protocol + window.location.host + '/ws/chat/' + roomId + '/';
+                    
+                    console.log("DEBUG: Intentando conectar a WebSocket en:", websocketUrl);
+                    
+                    const chatSocket = new WebSocket(websocketUrl);
+
+                    chatSocket.onopen = function(e) {
+                        console.log('DEBUG: WebSocket connection opened:', e);
+                    };
+
+                    chatSocket.onclose = function(e) {
+                        console.error('DEBUG: WebSocket connection closed unexpectedly:', e);
+                    };
+
+                    chatSocket.onerror = function(e) { 
+                        console.error('DEBUG: WebSocket Error:', e);
+                    };
+
+                    chatSocket.onmessage = function(e) {
+                        const data = JSON.parse(e.data);
+                        console.log("DEBUG: WebSocket message received:", data);
+                        const message = data.message;
+                        const senderFullName = data.sender_full_name;
+                        const senderUsername = data.sender_username;
+                        const messageTimestamp = data.timestamp; 
+                        
+                        addMessageToLog(message, senderFullName, senderUsername, messageTimestamp);
+                    };
+
+                    if (messageInput) {
+                        messageInput.focus();
+                        messageInput.onkeyup = function(e) {
+                            if (e.key === 'Enter') {
+                                submitButton.click();
+                            }
+                        };
+                    } else {
+                        console.error("DEBUG: #chat-message-input not found (after DOMContentLoaded).");
+                    }
+
+                    if (submitButton) {
+                        submitButton.onclick = function(e) {
+                            const message = messageInput.value.trim();
+                            if (message) { 
+                                chatSocket.send(JSON.stringify({
+                                    'message': message,
+                                }));
+                                messageInput.value = ''; 
+                            }
+                        };
+                    } else {
+                        console.error("DEBUG: #chat-message-submit not found (after DOMContentLoaded).");
+                    }
+
+                    console.log("DEBUG: Initial messages display activated.");
+                    lastMessageDate = ''; 
+                    initialMessages.forEach(msg => {
+                        addMessageToLog(msg.content, msg.sender_full_name, msg.sender_username, msg.timestamp);
+                    });
+                    
+                    if (chatLog) {
+                        chatLog.scrollTop = chatLog.scrollHeight;
+                        console.log("DEBUG: Scrolled to bottom after initial messages.");
+                    } else {
+                        console.error("DEBUG: #chat-log not found for scrolling (after initial messages).");
+                    }
+                }
+            });
+        </script>
+        <script>
+            const botonMover = document.getElementById('sidebuton');
+            const cajaAMover = document.getElementById('sidebar');
+
+            let estaAbierto = false;
+
+            const posicionCerradoCaja = -110;
+            const posicionAbiertoCaja = 0;
+
+            const posicionCerradoBoton = 0;
+            const posicionAbiertoBoton = 300;
+
+            cajaAMover.style.left = `${posicionCerradoCaja}px`;
+            botonMover.style.left = `${posicionCerradoBoton}px`;
+
+            botonMover.addEventListener('click', () => {
+                if (!estaAbierto) {
+                    cajaAMover.style.left = `${posicionAbiertoCaja}px`;
+                    cajaAMover.style.width = `300px`;
+                    botonMover.style.left = `${posicionAbiertoBoton}px`;
+                    botonMover.style.transform = `rotate(90deg)`;
+                    estaAbierto = true;
+                } else {
+                    cajaAMover.style.left = `${posicionCerradoCaja}px`;
+                    cajaAMover.style.width = `110px`;
+                    botonMover.style.left = `${posicionCerradoBoton}px`;
+                    botonMover.style.transform = `rotate(270deg)`;
+                    estaAbierto = false;
+                }
+            });
+        </script>
+    </body>
+</html>
+{% endblock %}

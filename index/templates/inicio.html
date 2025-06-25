@@ -1,0 +1,332 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <!-- =============== Cabecera ================ -->  
+    <head>
+		<meta charset="UTF-8">
+ 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  		<title>RAIZCOM | Inicio</title>
+        <link rel="manifest" href="{% static 'manifest.json' %}">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon" href="{% static '/img/icon-192x192.png' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+        <link rel="icon" type="image/x-icon" href="{% static '/img/LOGO_ICON.png' %}">
+	</head>
+    <body>
+        <!-- =============== Ménu principal ================ -->
+        <div class="sidebuton" id="sidebuton">
+            <i class="fa-solid fa-circle-chevron-down"></i>
+        </div>
+        <div class="sidebar" id="sidebar" style="z-index: 0;">
+            <div class="logo"></div>
+            <ul class="menu">
+                <li class="active">
+                    <a href="#">
+                        <img style="width:35px; height: 35px;" src="{% static 'img/LOGO_ICON.png' %}">
+                        <span class="title" style="color: #ffffff;"><strong>RAIZCOM</strong></span>
+                        &nbsp;&nbsp;&nbsp;
+                    </a>
+                </li>
+                <li>
+                    <a href="../">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Inicio</span>
+                    </a>
+                </li>
+                {% if es_administrador_o_publicador %}
+                    <li>
+                        <a href="../publicaciones/noticias/">
+                            <i class="fa-solid fa-upload"></i>
+                            <span>Publicador</span>
+                        </a>
+                    </li>
+                {% endif %}
+                <li>
+                    <a href="../chat/">
+                        <i class="fa-solid fa-comment-dots"></i>
+                        <span>Comunicación</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../contactos/">
+                        <i class="fa-solid fa-address-book"></i>
+                        <span>Contactos</span>
+                    </a>
+                </li>
+                <li> 
+                    <a href="../servicios/">
+                        <i class="fa-solid fa-globe"></i>
+                        <span>Buscar Servicios</span>
+                    </a>
+                </li>
+                {% if es_administrador %}
+                    <li>
+                        <a href="../usuarios/">
+                            <i class="fa-solid fa-users"></i>
+                            <span>Usuarios</span>
+                        </a>
+                    </li>
+                {% endif %}
+                <hr style="border: #b4baca solid 1px;">
+                <li> 
+                    <a href="#" id="creditosbtn">
+                        <i class="fa-solid fa-id-badge"></i>
+                        <span>Creditos</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- ========================= Menú de usuario ==================== -->
+        <div class="main--content">
+            <div class="header--wrapper">
+                <div class="header--title">
+                    <h2>Inicio</h2>
+                </div>
+                <div class="user--info">
+                    <a href="usuario/" class="user--link">
+                        <div class="box">
+                            {% if request.user.foto %}
+                                <img src="{{ request.user.foto.url }}">
+                            {% else %}
+                                <i class="fa-solid fa-circle-user"></i>
+                            {% endif %}
+                            <h3>{{request.user.first_name}} {{request.user.last_name}}</h3>
+                        </div>
+                    </a>
+                    |
+                    <li class="butun">
+                        <a href="{% url 'logout' %}" style="text-decoration: none;">
+                            <label class="switch">
+                                <i class="fa-solid fa-power-off" style="color: #030c1c;"></i>
+                            </label>
+                        </a>
+                    </li>
+                </div>
+            </div>
+            <!-- ===================== BODY PRINCIPAL ====================  -->
+            
+            <div class="table-container">
+                <div style="display: flex; flex-wrap: wrap; padding: 10px;">
+                    <div style="margin-top: 20px;">
+                        <h2>Bienvenidos a RAIZCOM</h2>
+                        <p>La comunidad movil a la palma de tu mano!</p>
+                    </div>
+                    <div class="logohome">
+                        <img src="{% static 'img/LOGO.png' %}" style="width: 100px;">
+                    </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; padding: 10px; background-color: #0E2533; width: 100%; margin-top: 20px; border-radius: 15px;">
+                    <div>
+                        <h4 style="color: white;">Últimas Publicaciones</h4>
+                    </div>
+                    <div style="margin-top: 2px; float: right; right: 0; position: absolute; margin-right: 50px;">
+                        <i class="fa-solid fa-newspaper" style="color: white;"></i>
+                    </div>
+                </div>
+                {% for noticia in noticias %}
+                    <div class="cajanoticias">
+                        <div class="cajaimagen">
+                            <img src="{{ noticia.imagen.url }}" class="imagenoticia">
+                        </div>
+                        <div style="margin-left: 10px;">
+                            <b><p>{{ noticia.titulo }}</p></b>
+                            <p style="text-align: justify;">{{ noticia.contenido }}</p>
+                            <p style="font-size: 13px;  margin-top: 10px;">Fecha: {{ noticia.fecha_publicacion|date:"d/m/Y" }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div> 
+        </div>
+        <!-- ======================= CRÉDITOS ======================  -->
+        <div id="creditomodal" class="modal">
+            <div class="modal-content">
+                <span class="closee close" style="margin-top: -10px;">&times;</span>
+                <div class="modal-header">
+                    <h2>Realizado por:</h2>
+                    <hr  class="modal-credits-hr">
+                    <div class="modal-credits">
+                        <div class="modal-credits-box">
+                            <p>
+                                <div class="modal-credits-box-c">
+                                    <div class="modal-credits-box-content">
+                                        <img src="{% static 'img/angelo.jpg' %}" class="modal-credits-box-img">
+                                    </div>
+                                    Angelo Camacho
+                                    <br>
+                                    ing.adcamacho@gmail.com
+                                    <div class="modal-credits-box-qr">
+                                        <a href="#" id="qrangelo">
+                                            <i class="fa-solid fa-qrcode" style="font-size: 40px; color: #030c1c;"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </p>
+                            <p>
+                                <div class="modal-credits-box-c">
+                                    <div class="modal-credits-box-content">
+                                        <img src="{% static 'img/miguel.jpg' %}" class="modal-credits-box-img2" s>
+                                    </div>
+                                    Miguel Marquez
+                                    <br>
+                                    ing.mmarqu3z@gmail.com
+                                    <div class="modal-credits-box-qr2">
+                                        <a href="#" id="qrmiguel">
+                                            <i class="fa-solid fa-qrcode" style="font-size: 40px; color: #030c1c;"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </p>
+                            <p>
+                                <div style="display: flex; flex-wrap: wrap; align-items: center;">
+                                    <div style="margin-bottom: 10px; border: #030c1c solid 2px; padding: 13px; border-radius: 100px; margin-right: 10px; width: 120px; height: 70px;">
+                                        <img src="{% static 'img/UNEXCA.jpg' %}" style="width: 90px; height: 40px;" alt="">
+                                    </div>
+                                    Lcdo. Walter Carrazquero
+                                    <br>
+                                    Profesor de PNFI
+                                    <br>
+                                    Núcleo Altagracia
+                                </div>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <br>
+            </div>
+        </div>
+
+        <!-- ======================= SCRIPT ABRIR CRÉDITOS ======================  -->
+        <script>
+            var creditosbtn = document.getElementById("creditosbtn");
+            var creditos = document.getElementById("creditomodal");
+            var spann = document.getElementsByClassName("closee")[0];
+            creditosbtn.onclick = function() {
+                creditos.style.visibility = "visible";
+                creditos.style.opacity = 1;
+            }
+
+            spann.onclick = function() {
+                creditos.style.visibility = "hidden";
+                creditos.style.opacity = 0;
+            }
+
+            window.onclick = function(event) {
+                if (event.target == creditos) {
+                    creditos.style.visibility = "hidden";
+                    creditos.style.opacity = 0;
+                }
+            }
+        </script>
+
+        <!-- ======================= MODAL QR ANGELO CAMACHO ======================  -->
+        <div id="qrangelomodal" class="modal">
+            <div class="modal-content">
+                <span class="closeeqr close" style="margin-top: -10px;">&times;</span>
+                <div class="modal-header">
+                    <div align="center">
+                        <img src="{% static 'img/qrangelo.png' %}" class="userimagen">                        
+                    </div>
+                    <br>
+                    <div align="center">
+                        <a href="https://adcamacho.pythonanywhere.com/" style="color: black; margin-left: -30px;">Enlace Directo</a>
+                    </div>
+                </div>
+                <br>
+            </div>
+        </div>
+        <script>
+            var qrangelobtn = document.getElementById("qrangelo");
+            var qrangelo = document.getElementById("qrangelomodal");
+            var spannqr = document.getElementsByClassName("closeeqr")[0];
+            qrangelobtn.onclick = function() {
+                qrangelo.style.visibility = "visible";
+                qrangelo.style.opacity = 1;
+            }
+
+            spannqr.onclick = function() {
+                qrangelo.style.visibility = "hidden";
+                qrangelo.style.opacity = 0;
+            }
+
+            window.onclick = function(event) {
+                if (event.target == qrangelo) {
+                    qrangelo.style.visibility = "hidden";
+                    qrangelo.style.opacity = 0;
+                }
+            }
+        </script>
+
+        <!-- ======================= MODAL QR MIGUEL MÁRQUEZ ======================  -->
+        <div id="qrmiguelmodal" class="modal">
+            <div class="modal-content">
+                <span class="closeeqr2 close" style="margin-top: -10px;">&times;</span>
+                <div class="modal-header">
+                    <div align="center">
+                        <img src="{% static 'img/qrmiguel.png' %}" class="userimagen">
+                    </div>
+                    <br>
+                    <div align="center">
+                        <a href="https://mmarquez.pythonanywhere.com/" style="color: black; margin-left: -30px;">Enlace Directo</a>
+                    </div>
+                </div>
+                <br>
+            </div>
+        </div>
+        <script>
+            var qrmiguelbtn = document.getElementById("qrmiguel");
+            var qrmiguel = document.getElementById("qrmiguelmodal");
+            var spann2qr = document.getElementsByClassName("closeeqr2")[0];
+            qrmiguelbtn.onclick = function() {
+                qrmiguel.style.visibility = "visible";
+                qrmiguel.style.opacity = 1;
+            }
+
+            spann2qr.onclick = function() {
+                qrmiguel.style.visibility = "hidden";
+                qrmiguel.style.opacity = 0;
+            }
+
+            window.onclick = function(event) {
+                if (event.target == qrmiguel) {
+                    qrmiguel.style.visibility = "hidden";
+                    qrmiguel.style.opacity = 0;
+                }
+            }
+        </script>
+        <script>
+            const botonMover = document.getElementById('sidebuton');
+            const cajaAMover = document.getElementById('sidebar');
+
+            let estaAbierto = false;
+
+            const posicionCerradoCaja = -110;
+            const posicionAbiertoCaja = 0;
+
+            const posicionCerradoBoton = 0;
+            const posicionAbiertoBoton = 300;
+
+            cajaAMover.style.left = `${posicionCerradoCaja}px`;
+            botonMover.style.left = `${posicionCerradoBoton}px`;
+
+            botonMover.addEventListener('click', () => {
+                if (!estaAbierto) {
+                    cajaAMover.style.left = `${posicionAbiertoCaja}px`;
+                    cajaAMover.style.width = `300px`;
+                    botonMover.style.left = `${posicionAbiertoBoton}px`;
+                    botonMover.style.transform = `rotate(90deg)`;
+                    estaAbierto = true;
+                } else {
+                    cajaAMover.style.left = `${posicionCerradoCaja}px`;
+                    cajaAMover.style.width = `110px`;
+                    botonMover.style.left = `${posicionCerradoBoton}px`;
+                    botonMover.style.transform = `rotate(270deg)`;
+                    estaAbierto = false;
+                }
+            });
+        </script>
+    </body>
+</html>
+    

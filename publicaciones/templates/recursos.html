@@ -1,0 +1,732 @@
+{% extends 'success.html' %}
+{% block success %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <!-- =============== Cabecera ================ -->  
+    <head>
+		<meta charset="UTF-8">
+ 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  		<title>RAIZCOM | Recursos</title>
+        <link rel="manifest" href="{% static 'manifest.json' %}">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon" href="{% static '/img/icon-192x192.png' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+        <link rel="icon" type="image/x-icon" href="{% static '/img/LOGO_ICON.png' %}">
+	</head>
+    <body>
+        <!-- =============== Ménu principal ================ -->
+         <div class="sidebuton" id="sidebuton">
+            <i class="fa-solid fa-circle-chevron-down"></i>
+        </div>
+        <div class="sidebar" id="sidebar">
+            <div class="logo"></div>
+            <ul class="menu">
+                <li class="active">
+                    <a href="#">
+                        <img style="width:35px; height: 35px;" src="{% static 'img/LOGO_ICON.png' %}">
+                        <span class="title" style="color: #ffffff;"><strong>RAIZCOM</strong></span>
+                    </a>
+                </li>
+                <li class="logout.new">
+                    <a href="../../">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Volver</span>
+                    </a>
+                </li>
+                <hr style="border: #b4baca solid 1px;">
+                <li>
+                    <a href="../noticias/">
+                        <i class="fa-solid fa-newspaper"></i>
+                        <span>Noticias</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../recursos/">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                        <span>Recursos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../pservicios/">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>Servicios</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- ========================= Menú de usuario ==================== -->
+        <div class="main--content">
+            <div class="header--wrapper">
+                <div class="header--title">
+                    <h2>RAIZCOM | Recursos</h2>
+                </div>
+                <div class="user--info">
+                    <a href="../../usuario/" class="user--link">
+                        <div class="box">
+                            {% if request.user.foto %}
+                                <img src="{{ request.user.foto.url }}">
+                            {% else %}
+                                <i class="fa-solid fa-circle-user"></i>
+                            {% endif %}
+                            <h3>{{request.user.first_name}} {{request.user.last_name}}</h3>
+                        </div>
+                    </a>
+                    |
+                    <li class="butun">
+                        <a href="{% url 'logout' %}" style="text-decoration: none;">
+                            <label class="switch">
+                                <i class="fa-solid fa-power-off" style="color: #030c1c;"></i>
+                            </label>
+                        </a>
+                    </li>
+                </div>
+            </div>
+            <!-- ======================= Agrear Recursos ======================  -->
+            <div class="tabular--wrapper">
+                <h3 class="main--title"></h3>
+                <div class="user--info">
+                    <button id="myBtn" class="bt">Agregar</button>
+                    <a href="print/" class="bt btp">Lista Completa</a>
+                </div>
+            </div>
+            <!-- ======================= Formulario Agregar Recurso ======================  -->       
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" style="margin-top: -10px;">&times;</span>
+                    <div class="modal-header">
+                        <h2>Agregar Recurso</h2>
+                    </div>
+                    <br>
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="form-items">
+                                <label>Tipo de Recurso</label>
+                                <br>
+                                <select required name="{{form1.tipo_recurso.html_name}}" id="id_comunidad_select" class="form-control">
+                                    <option value="" disabled selected> Selección</option>
+                                    <option value="" disabled> Bolsas</option>
+                                    <option value="Bolsas de Comida (Pago)">Bolsas de Comida (Pago)</option>
+                                    <option value="Bolsas de Comida (Retiro)">Bolsas de Comida (Retiro)</option>
+                                    <option value="" disabled> Gas</option>
+                                    <option value="Gas (Pago)">Gas (Pago)</option>
+                                    <option value="Gas (Retiro)">Gas (Retiro)</option>
+                                    <option value="" disabled> Sociales</option>
+                                    <option value="Atención a los adultos mayores">Atención a los adultos mayores</option>
+                                    <option value="Emprendedores">Emprendedores</option>
+                                    <option value="Jornada de Salud">Jornada de Salud</option>
+                                </select>
+                            </div>
+                            <div class="form-items">
+                                <label>Fecha y Hora</label>
+                                <br>
+                                <input required type="datetime-local" name="{{ form1.fecha.html_name }}" class="form-control">
+                            </div>
+                            <div class="form-items" id="precio_field_container" style="display: none;">
+                                <label for="id_precio">Precio</label>
+                                <br>
+                                <input type="number" id="id_precio" name="{{ form1.precio.html_name }}" class="form-control" placeholder="Ingrese el precio" step="0.01">
+                            </div>
+                            <div class="form-items" id="lugarcaja">
+                                <label>Lugar</label>
+                                <br>
+                                <input required type="text" name="{{ form1.lugar.html_name }}" id="lugar" class="form-control">
+                            </div>
+                        </div>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const comunidadSelect = document.getElementById('id_comunidad_select');
+                                const precioFieldContainer = document.getElementById('precio_field_container');
+                                const precioInput = document.getElementById('id_precio');
+                                const lugarcaja = document.getElementById('lugarcaja');
+                                const lugar = document.getElementById('lugar');
+
+                                function togglePrecioField() {
+                                    const selectedValue = comunidadSelect.value;
+                                    const showPrecioOptions = ['Bolsas de Comida (Pago)', 'Gas (Pago)'];
+
+                                    if (showPrecioOptions.includes(selectedValue)) {
+                                        precioFieldContainer.style.display = 'block';
+                                        precioInput.setAttribute('required', 'required');
+                                        lugarcaja.style.display = 'none';
+                                        lugar.value = 'N/A';
+                                    } else {
+                                        precioFieldContainer.style.display = 'none';
+                                        precioInput.removeAttribute('required');
+                                        precioInput.value = '';
+                                        lugarcaja.style.display = 'block';
+                                        lugar.value = '';
+                                    }
+                                }
+
+                                togglePrecioField();
+                                comunidadSelect.addEventListener('change', togglePrecioField);
+                            });
+                        </script>
+                        <br>
+                        <div align="center">
+                            <input type="submit" class="bnt" value="Enviar" style="width: 90px;">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- ===================== TABLA PRINCIPAL ====================  -->
+            <div class="tabular--wrapper" style="margin-top: 10px; padding-top: 10px;">
+                <h3>Recursos Activos</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tipo de Recursos</th>
+                                <th>Fecha</th>
+                                <th>Lugar</th>
+                                <th>Precio (BS)</th>
+                                <th>Estatus</th>
+                                <th>Acciones</th>
+                            </tr>
+                            <tbody>
+                                {% for archivo in publicacionesa %}
+                                    <tr>
+                                        <td class="tdc">{{ archivo.tipo_recurso }}</td>
+                                        <td class="tdc">{{ archivo.fecha|date:"d/m/Y" }}</td>
+                                        <td class="tdc">{{ archivo.lugar }}</td>
+                                        {% if archivo.precio %}
+                                            <td class="tdc">{{ archivo.precio }}</td>
+                                        {% else %}
+                                            <td class="tdc">N/A</td>
+                                        {% endif %}
+                                        <td class="tdc">{{ archivo.estatus }}</td>
+                                        <td>
+                                            <div class="tdc1">
+                                                <!-- ===================== EDITAR PUBLICACIÓN ====================  -->
+                                                <a href="#!" id="myBtnn3{{ archivo.id }}" style="color: black;" title="Modificar"><i class="fa-solid fa-pen-to-square"></i></a>
+                                                <div id="myModall3{{ archivo.id }}" class="modal">
+                                                    <div class="modal-content">
+                                                        <span class="closee3{{ archivo.id }} close" style="margin-top: -10px;">&times;</span>
+                                                        <div class="modal-header">
+                                                            <h2 style="text-align: center;">Modificar Recurso</h2>
+                                                        </div>
+                                                        <br>
+                                                        <form method="POST" action="update/{{ archivo.pk }}">
+                                                            {% csrf_token %}
+                                                            <div class="form-group">
+                                                                <div class="form-items">
+                                                                    <label>Fecha</label>
+                                                                    <br>
+                                                                    <input required type="datetime-local" name="{{ form2.fecha.html_name }}" class="form-control" value="{{ archivo.fecha|date:'Y-m-d\TH:i' }}">
+                                                                </div>
+                                                                {% if archivo.tipo_recurso != 'Bolsas de Comida (Pago)' and archivo.tipo_recurso != 'Gas (Pago)' %}
+                                                                    <div class="form-items">
+                                                                        <label>Lugar</label>
+                                                                        <br>
+                                                                        <input required type="text" name="{{ form2.lugar.html_name }}" class="form-control" value='{{ archivo.lugar }}'>
+                                                                    </div>
+                                                                {% endif %}
+                                                            </div>
+                                                            <br>
+                                                            <div align="center">
+                                                                <input type="submit" class="bnt" value="Enviar" style="width: 90px;">
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                                <script>
+                                                    var modall3{{ archivo.id }} = document.getElementById("myModall3{{ archivo.id }}");
+                                                    var btnn3{{ archivo.id }} = document.getElementById("myBtnn3{{ archivo.id }}");
+                                                    var spann3{{ archivo.id }} = document.getElementsByClassName("closee3{{ archivo.id }}")[0];
+                                                    btnn3{{ archivo.id }}.onclick = function() {
+                                                        modall3{{ archivo.id }}.style.visibility = "visible";
+                                                        modall3{{ archivo.id }}.style.opacity = 1;
+                                                    }
+                                                
+                                                    spann3{{ archivo.id }}.onclick = function() {
+                                                        modall3{{ archivo.id }}.style.visibility = "hidden";
+                                                        modall3{{ archivo.id }}.style.opacity = 0;
+                                                    }
+                                                
+                                                    window.onclick = function(event) {
+                                                        if (event.target == modall3{{ archivo.id }}) {
+                                                            modall3{{ archivo.id }}.style.visibility = "hidden";
+                                                            modall3{{ archivo.id }}.style.opacity = 0;
+                                                        }
+                                                    }
+                                                </script>
+                                                
+                                                {% if archivo.pago == True %}
+                                                    <!-- ===================== VER PAGOS ====================  -->
+                                                    <a href="#!" id="myBtnn2{{ archivo.id }}" style="color: black;" title="Ver Pagos"><i class="fa-solid fa-file-invoice"></i></a>
+                                                    <div id="myModall2{{ archivo.id }}" class="modal">
+                                                        <div class="modal-content">
+                                                            <span class="closee2{{ archivo.id }} close" style="margin-top: -10px;">&times;</span>
+                                                            <div class="modal-header">
+                                                                <h2 style="text-align: center;">Ver Pagos</h2>
+                                                            </div>
+                                                            <br>
+                                                            <table>
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Usuario</th>
+                                                                        <th>Cédula</th>
+                                                                        <th>Comunidad</th>
+                                                                        <th>Fecha</th>
+                                                                        <th>Comprobante</th>
+                                                                    </tr>
+                                                                    <tbody>
+                                                                        {% if archivo.recursos_pagos_relacionados %}
+                                                                            {% for pago in archivo.recursos_pagos_relacionados %}
+                                                                                <tr>
+                                                                                    <td>{{ pago.usuario }}</td>
+                                                                                    <td>{{ pago.cedula }}</td>
+                                                                                    <td>{{ pago.comunidad }}</td>
+                                                                                    <td>{{ pago.fechap|date:"d/m/Y H:i" }}</td>
+                                                                                    <td>
+                                                                                        <a href="#" id="verimagen{{ archivo.id }}" style="color: black;" title="Ver imagen"><i class="fa-solid fa-eye iconojo"></i></a>
+                                                                                        <div id="verimagenmodal{{ archivo.id }}" class="modal">
+                                                                                            <div class="modal-content">
+                                                                                                <span class="closeeimagen{{ archivo.id }} close" style="margin-top: -10px;">&times;</span>
+                                                                                                <div class="modal-header">
+                                                                                                    <div align="center">
+                                                                                                        <img src="{{ pago.comprobante.url }}" style="width: 400px; height: 400px;">                        
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <script>
+                                                                                            var verimagenmodal{{ archivo.id }} = document.getElementById("verimagenmodal{{ archivo.id }}");
+                                                                                            var verimagen{{ archivo.id }} = document.getElementById("verimagen{{ archivo.id }}");
+                                                                                            var spannver{{ archivo.id }} = document.getElementsByClassName("closeeimagen{{ archivo.id }}")[0];
+                                                                                            verimagen{{ archivo.id }}.onclick = function() {
+                                                                                                verimagenmodal{{ archivo.id }}.style.visibility = "visible";
+                                                                                                verimagenmodal{{ archivo.id }}.style.opacity = 1;
+                                                                                            }
+
+                                                                                            spannver{{ archivo.id }}.onclick = function() {
+                                                                                                verimagenmodal{{ archivo.id }}.style.visibility = "hidden";
+                                                                                                verimagenmodal{{ archivo.id }}.style.opacity = 0;
+                                                                                            }
+
+                                                                                            window.onclick = function(event) {
+                                                                                                if (event.target == modall{{ archivo.id }}) {
+                                                                                                    verimagenmodal{{ archivo.id }}.style.visibility = "hidden";
+                                                                                                    verimagenmodal{{ archivo.id }}.style.opacity = 0;
+                                                                                                }
+                                                                                            }
+                                                                                        </script>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            {% endfor %}
+                                                                        {% else %}
+                                                                            <tr>
+                                                                                <td colspan="5">NO SE HAN REGISTRADO PAGOS.</td>
+                                                                            </tr>
+                                                                        {% endif %}
+                                                                    </tbody>
+                                                                </thead>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <script>
+                                                        var modall2{{ archivo.id }} = document.getElementById("myModall2{{ archivo.id }}");
+                                                        var btnn2{{ archivo.id }} = document.getElementById("myBtnn2{{ archivo.id }}");
+                                                        var spann2{{ archivo.id }} = document.getElementsByClassName("closee2{{ archivo.id }}")[0];
+                                                        btnn2{{ archivo.id }}.onclick = function() {
+                                                            modall2{{ archivo.id }}.style.visibility = "visible";
+                                                            modall2{{ archivo.id }}.style.opacity = 1;
+                                                        }
+
+                                                        spann2{{ archivo.id }}.onclick = function() {
+                                                            modall2{{ archivo.id }}.style.visibility = "hidden";
+                                                            modall2{{ archivo.id }}.style.opacity = 0;
+                                                        }
+
+                                                        window.onclick = function(event) {
+                                                            if (event.target == modall{{ archivo.id }}) {
+                                                                modall2{{ archivo.id }}.style.visibility = "hidden";
+                                                                modall2{{ archivo.id }}.style.opacity = 0;
+                                                            }
+                                                        }
+                                                    </script>
+                                                {% endif %}
+                                                <!-- ===================== CERRAR RECURSO ====================  -->
+                                                <a href="#!" id="myBtnn9{{ archivo.id }}" style="color: black;" title="Finalizar Recurso"><i class="fa-solid fa-lock"></i></a>
+                                                <div id="myModall9{{ archivo.id }}" class="modal">
+                                                    <div class="modal-content">
+                                                        <span class="closee9{{ archivo.id }} close" style="margin-top: -10px;">&times;</span>
+                                                        <div class="modal-header">
+                                                            <form action="finalizar/{{ archivo.pk }}" method="POST">
+                                                                {% csrf_token %}
+                                                                <br>
+                                                                <div align="center">
+                                                                    <h2>¿Estás seguro de finalizar esta publicación?</h2>
+                                                                </div>
+                                                                <br><br>
+                                                                <div align="center">
+                                                                    <input type="submit" class="bnt" value="Continuar" style="width: 90px;">
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <script>
+                                                    var modall9{{ archivo.id }} = document.getElementById("myModall9{{ archivo.id }}");
+                                                    var btnn9{{ archivo.id }} = document.getElementById("myBtnn9{{ archivo.id }}");
+                                                    var spann9{{ archivo.id }} = document.getElementsByClassName("closee9{{ archivo.id }}")[0];
+                                                    btnn9{{ archivo.id }}.onclick = function() {
+                                                        modall9{{ archivo.id }}.style.visibility = "visible";
+                                                        modall9{{ archivo.id }}.style.opacity = 1;
+                                                    }
+                                                
+                                                    spann9{{ archivo.id }}.onclick = function() {
+                                                        modall9{{ archivo.id }}.style.visibility = "hidden";
+                                                        modall9{{ archivo.id }}.style.opacity = 0;
+                                                    }
+                                                
+                                                    window.onclick = function(event) {
+                                                        if (event.target == modall3{{ archivo.id }}) {
+                                                            modall9{{ archivo.id }}.style.visibility = "hidden";
+                                                            modall9{{ archivo.id }}.style.opacity = 0;
+                                                        }
+                                                    }
+                                                </script>
+                                                <!-- ===================== ELIMINAR RECURSO ====================  -->
+                                                <a href="#!" id="myBtnn4{{ archivo.id }}" style="color: black;" title="Eliminar"><i class="fa-solid fa-trash"></i></a>
+                                                <div id="myModall4{{ archivo.id }}" class="modal">
+                                                    <div class="modal-content">
+                                                        <span class="closee4{{ archivo.id }} close" style="margin-top: -10px;">&times;</span>
+                                                        <div class="modal-header">
+                                                            <form action="delete/{{ archivo.pk }}" method="POST">
+                                                                {% csrf_token %}
+                                                                <br>
+                                                                <div align="center">
+                                                                    <h2>¿Estás seguro de eliminar esta publicación?</h2>
+                                                                </div>
+                                                                <br><br>
+                                                                <div align="center">
+                                                                    <input type="submit" class="bnt" value="Continuar" style="width: 90px;">
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <script>
+                                                    var modall4{{ archivo.id }} = document.getElementById("myModall4{{ archivo.id }}");
+                                                    var btnn4{{ archivo.id }} = document.getElementById("myBtnn4{{ archivo.id }}");
+                                                    var spann4{{ archivo.id }} = document.getElementsByClassName("closee4{{ archivo.id }}")[0];
+                                                    btnn4{{ archivo.id }}.onclick = function() {
+                                                        modall4{{ archivo.id }}.style.visibility = "visible";
+                                                        modall4{{ archivo.id }}.style.opacity = 1;
+                                                    }
+                                                
+                                                    spann4{{ archivo.id }}.onclick = function() {
+                                                        modall4{{ archivo.id }}.style.visibility = "hidden";
+                                                        modall4{{ archivo.id }}.style.opacity = 0;
+                                                    }
+                                                
+                                                    window.onclick = function(event) {
+                                                        if (event.target == modall3{{ archivo.id }}) {
+                                                            modall4{{ archivo.id }}.style.visibility = "hidden";
+                                                            modall4{{ archivo.id }}.style.opacity = 0;
+                                                        }
+                                                    }
+                                                </script>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </thead>
+                    </table>
+                </div>
+                <br>
+                <h3>Recursos Finalizados</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tipo de Recursos</th>
+                                <th>Fecha</th>
+                                <th>Lugar</th>
+                                <th>Precio (BS)</th>
+                                <th>Estatus</th>
+                                <th>Acciones</th>
+                            </tr>
+                            <tbody>
+                                {% for archivo in publicacionesf %}
+                                
+                                    <tr>
+                                        <td class="tdc">{{ archivo.tipo_recurso }}</td>
+                                        <td class="tdc">{{ archivo.fecha|date:"d/m/Y" }}</td>
+                                        <td class="tdc">{{ archivo.lugar }}</td>
+                                        {% if archivo.precio %}
+                                            <td class="tdc">{{ archivo.precio }}</td>
+                                        {% else %}
+                                            <td class="tdc">N/A</td>
+                                        {% endif %}
+                                        <td class="tdc">{{ archivo.estatus }}</td>
+                                        <td>
+                                            <div class="tdc1">
+                                                    {% if archivo.pago == True %}
+                                                    <!-- ===================== VER PAGOS ====================  -->
+                                                    <a href="#!" id="myBtnn2{{ archivo.id }}" style="color: black;" title="Ver Pagos"><i class="fa-solid fa-file-invoice"></i></a>
+                                                    <div id="myModall2{{ archivo.id }}" class="modal">
+                                                        <div class="modal-content">
+                                                            <span class="closee2{{ archivo.id }} close" style="margin-top: -10px;">&times;</span>
+                                                            <div class="modal-header">
+                                                                <h2 style="text-align: center;">Ver Pagos</h2>
+                                                            </div>
+                                                            <br>
+                                                            <table>
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Usuario</th>
+                                                                        <th>Cédula</th>
+                                                                        <th>Comunidad</th>
+                                                                        <th>Fecha</th>
+                                                                        <th>Comprobante</th>
+                                                                    </tr>
+                                                                    <tbody>
+                                                                        {% if archivo.recursos_pagos_relacionados %}
+                                                                            {% for pago in archivo.recursos_pagos_relacionados %}
+                                                                                <tr>
+                                                                                    <td>{{ pago.usuario }}</td>
+                                                                                    <td>{{ pago.cedula }}</td>
+                                                                                    <td>{{ pago.comunidad }}</td>
+                                                                                    <td>{{ pago.fechap|date:"d/m/Y H:i" }}</td>
+                                                                                    <td>
+                                                                                        <a href="#" id="verimagen{{ archivo.id }}" style="color: black;" title="Ver imagen"><i class="fa-solid fa-eye iconojo"></i></a>
+                                                                                        <div id="verimagenmodal{{ archivo.id }}" class="modal">
+                                                                                            <div class="modal-content">
+                                                                                                <span class="closeeimagen{{ archivo.id }} close" style="margin-top: -10px;">&times;</span>
+                                                                                                <div class="modal-header">
+                                                                                                    <div align="center">
+                                                                                                        <img src="{{ pago.comprobante.url }}" style="width: 400px; height: 400px;">                        
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <script>
+                                                                                            var verimagenmodal{{ archivo.id }} = document.getElementById("verimagenmodal{{ archivo.id }}");
+                                                                                            var verimagen{{ archivo.id }} = document.getElementById("verimagen{{ archivo.id }}");
+                                                                                            var spannver{{ archivo.id }} = document.getElementsByClassName("closeeimagen{{ archivo.id }}")[0];
+                                                                                            verimagen{{ archivo.id }}.onclick = function() {
+                                                                                                verimagenmodal{{ archivo.id }}.style.visibility = "visible";
+                                                                                                verimagenmodal{{ archivo.id }}.style.opacity = 1;
+                                                                                            }
+
+                                                                                            spannver{{ archivo.id }}.onclick = function() {
+                                                                                                verimagenmodal{{ archivo.id }}.style.visibility = "hidden";
+                                                                                                verimagenmodal{{ archivo.id }}.style.opacity = 0;
+                                                                                            }
+
+                                                                                            window.onclick = function(event) {
+                                                                                                if (event.target == modall{{ archivo.id }}) {
+                                                                                                    verimagenmodal{{ archivo.id }}.style.visibility = "hidden";
+                                                                                                    verimagenmodal{{ archivo.id }}.style.opacity = 0;
+                                                                                                }
+                                                                                            }
+                                                                                        </script>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            {% endfor %}
+                                                                        {% else %}
+                                                                            <tr>
+                                                                                <td colspan="5">NO SE HAN REGISTRADO PAGOS.</td>
+                                                                            </tr>
+                                                                        {% endif %}
+                                                                    </tbody>
+                                                                </thead>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <script>
+                                                        var modall2{{ archivo.id }} = document.getElementById("myModall2{{ archivo.id }}");
+                                                        var btnn2{{ archivo.id }} = document.getElementById("myBtnn2{{ archivo.id }}");
+                                                        var spann2{{ archivo.id }} = document.getElementsByClassName("closee2{{ archivo.id }}")[0];
+                                                        btnn2{{ archivo.id }}.onclick = function() {
+                                                            modall2{{ archivo.id }}.style.visibility = "visible";
+                                                            modall2{{ archivo.id }}.style.opacity = 1;
+                                                        }
+
+                                                        spann2{{ archivo.id }}.onclick = function() {
+                                                            modall2{{ archivo.id }}.style.visibility = "hidden";
+                                                            modall2{{ archivo.id }}.style.opacity = 0;
+                                                        }
+
+                                                        window.onclick = function(event) {
+                                                            if (event.target == modall{{ archivo.id }}) {
+                                                                modall2{{ archivo.id }}.style.visibility = "hidden";
+                                                                modall2{{ archivo.id }}.style.opacity = 0;
+                                                            }
+                                                        }
+                                                    </script>
+                                                {% endif %}
+                                                <a href="#!" id="myBtnn4{{ archivo.id }}" style="color: black;" title="Eliminar"><i class="fa-solid fa-trash"></i></a>
+                                                <div id="myModall4{{ archivo.id }}" class="modal">
+                                                    <div class="modal-content">
+                                                        <span class="closee4{{ archivo.id }} close" style="margin-top: -10px;">&times;</span>
+                                                        <div class="modal-header">
+                                                            <form action="delete/{{ archivo.pk }}" method="POST">
+                                                                {% csrf_token %}
+                                                                <br>
+                                                                <div align="center">
+                                                                    <h2>¿Estás seguro de eliminar esta publicación?</h2>
+                                                                </div>
+                                                                <br><br>
+                                                                <div align="center">
+                                                                    <input type="submit" class="bnt" value="Continuar" style="width: 90px;">
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <script>
+                                                    var modall4{{ archivo.id }} = document.getElementById("myModall4{{ archivo.id }}");
+                                                    var btnn4{{ archivo.id }} = document.getElementById("myBtnn4{{ archivo.id }}");
+                                                    var spann4{{ archivo.id }} = document.getElementsByClassName("closee4{{ archivo.id }}")[0];
+                                                    btnn4{{ archivo.id }}.onclick = function() {
+                                                        modall4{{ archivo.id }}.style.visibility = "visible";
+                                                        modall4{{ archivo.id }}.style.opacity = 1;
+                                                    }
+                                                
+                                                    spann4{{ archivo.id }}.onclick = function() {
+                                                        modall4{{ archivo.id }}.style.visibility = "hidden";
+                                                        modall4{{ archivo.id }}.style.opacity = 0;
+                                                    }
+                                                
+                                                    window.onclick = function(event) {
+                                                        if (event.target == modall3{{ archivo.id }}) {
+                                                            modall4{{ archivo.id }}.style.visibility = "hidden";
+                                                            modall4{{ archivo.id }}.style.opacity = 0;
+                                                        }
+                                                    }
+                                                </script>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- =========== Script de Agregar Noticias =========  -->
+        <script>
+            var modal = document.getElementById("myModal");
+            var btn = document.getElementById("myBtn");
+            var span = document.getElementsByClassName("close")[0];
+            btn.onclick = function() {
+                modal.style.visibility = "visible";
+                modal.style.opacity = 1;
+            }
+
+            span.onclick = function() {
+                modal.style.visibility = "hidden";
+                modal.style.opacity = 0;
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.visibility = "hidden";
+                    modal.style.opacity = 0;
+                }
+            }
+        </script>
+        <!-- =========== Script de Agregar Imagen de Noticia =========  -->
+        <script>
+            (function () {
+                const fileUpload = document.getElementById('file-upload');
+                const fileInput = document.getElementById('fileInput');
+                const fileDisplay = document.getElementById('fileDisplay');
+                const fileIcon = document.getElementById('fileIcon');
+                const fileName = document.getElementById('fileName');
+                const uploadMessage = document.getElementById('uploadMessage');
+
+                function handleFile(file) {
+                fileName.textContent = file.name;
+                fileName.style.display = 'inline';
+                fileIcon.src = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                fileIcon.style.display = 'inline';
+                uploadMessage.style.display = 'none';
+                }
+
+                fileUpload.addEventListener('click', () => {
+                fileInput.click();
+                });
+
+                fileUpload.addEventListener('dragover', (event) => {
+                event.preventDefault();
+                fileUpload.style.backgroundColor = '#e0e0e0';
+                });
+
+                fileUpload.addEventListener('dragleave', () => {
+                fileUpload.style.backgroundColor = '';
+                });
+
+                fileUpload.addEventListener('drop', (event) => {
+                event.preventDefault();
+                fileUpload.style.backgroundColor = '';
+                const file = event.dataTransfer.files[0];
+                if (file) {
+                    handleFile(file);
+                }
+                });
+
+                fileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    handleFile(file);
+                }
+                });
+
+                document.addEventListener('paste', (event) => {
+                const items = event.clipboardData.items;
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].kind === 'file') {
+                        const file = items[i].getAsFile();
+                        if (file) {
+                            handleFile(file);
+                        }
+                    }
+                }
+                });
+            })();
+        </script>
+        <script>
+            const botonMover = document.getElementById('sidebuton');
+            const cajaAMover = document.getElementById('sidebar');
+
+            let estaAbierto = false;
+
+            const posicionCerradoCaja = -110;
+            const posicionAbiertoCaja = 0;
+
+            const posicionCerradoBoton = 0;
+            const posicionAbiertoBoton = 300;
+
+            cajaAMover.style.left = `${posicionCerradoCaja}px`;
+            botonMover.style.left = `${posicionCerradoBoton}px`;
+
+            botonMover.addEventListener('click', () => {
+                if (!estaAbierto) {
+                    cajaAMover.style.left = `${posicionAbiertoCaja}px`;
+                    cajaAMover.style.width = `300px`;
+                    botonMover.style.left = `${posicionAbiertoBoton}px`;
+                    botonMover.style.transform = `rotate(90deg)`;
+                    estaAbierto = true;
+                } else {
+                    cajaAMover.style.left = `${posicionCerradoCaja}px`;
+                    cajaAMover.style.width = `110px`;
+                    botonMover.style.left = `${posicionCerradoBoton}px`;
+                    botonMover.style.transform = `rotate(270deg)`;
+                    estaAbierto = false;
+                }
+            });
+        </script>
+    </body>
+</html>
+{% endblock %}

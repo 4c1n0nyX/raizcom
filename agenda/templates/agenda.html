@@ -1,0 +1,411 @@
+{% extends 'success.html' %}
+{% block success %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <!-- =============== Cabeceras ================ -->		
+    <head>
+		<meta charset="UTF-8">
+ 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  		<title>RAIZCOM | Contactos</title>
+  		<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+        <link rel="manifest" href="{% static 'manifest.json' %}">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon" href="{% static '/img/icon-192x192.png' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+        <link rel="icon" type="image/x-icon" href="{% static '/img/LOGO_ICON.png' %}">
+	</head>
+    <body>
+        <!-- =============== Menú principal ================ -->
+         <div class="sidebuton" id="sidebuton">
+            <i class="fa-solid fa-circle-chevron-down"></i>
+        </div>
+        <div class="sidebar" id="sidebar">
+            <div class="logo"></div>
+            <ul class="menu">
+                <li class="active">
+                    <a href="#">
+                        <img style="width:35px; height: 35px;" src="{% static 'img/LOGO_ICON.png' %}">
+                        <span class="title" style="color: #ffffff;"><strong>RAIZCOM</strong></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../../">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Volver</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- ========================= Menú usuario ==================== -->
+        <div class="main--content">
+            <div class="header--wrapper">
+                <div class="header--title">
+                    <h2>RAIZCOM | Contactos</h2>
+                </div>
+                <div class="user--info">
+                    <a href="../usuario/" class="user--link">
+                        <div class="box">
+                            {% if request.user.foto %}
+                                <img src="{{ request.user.foto.url }}">
+                            {% else %}
+                                <i class="fa-solid fa-circle-user"></i>
+                            {% endif %}
+                            <h3>{{request.user.first_name}} {{request.user.last_name}}</h3>
+                        </div>
+                    </a>
+                    |
+                    <li class="butun">
+                        <a href="{% url 'logout' %}" style="text-decoration: none;">
+                            <label class="switch">
+                                <i class="fa-solid fa-power-off" style="color: #030c1c;"></i>
+                            </label>
+                        </a>
+                    </li>
+                </div>
+            </div>
+            <!-- ======================= Agregar Contactos ======================  -->
+            <div class="tabular--wrapper">
+                <h3 class="main--title"></h3>
+                <div class="user--info">
+                    <button id="myBtn" class="bt">Agregar</button>
+                </div>
+            </div>
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" style="margin-top: -10px;">&times;</span>
+                    <div class="modal-header">
+                        <h2 align="center">Agregar Contacto</h2>
+                    </div>
+                    <br>
+                    <form method="POST" enctype="multipart/form-data" >
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="form-items">
+                                <label>Cédula</label>
+                                <br>
+                                <input required type="text" class="form-control" name="{{add_contact_form.username.html_name}}" placeholder="Ingrese la cédula">
+                            </div>
+                        </div>
+                        <br>
+                        <div align="center">
+                            <input type="submit" class="bnt" value="Enviar" style="width: 90px;">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- ===================== Tabla de Contactos ====================  -->
+            {% if received_requests_pending %}
+                <div class="tabular--wrapper" style="margin-top: 10px; padding-top: 10px;">
+                    <div class="table-container" style="height: auto;">
+                        <h2>Solicitudes de Contacto Recibidas (Pendientes)</h2>
+                        {% for req in received_requests_pending %}
+                            <div style="display: flex; flex-wrap: wrap; padding: 20px; background-color: rgb(235, 234, 234); width: 100%; margin-top: 10px; border-radius: 15px; align-items: center;">
+                                <div style="display: flex; flex-wrap: wrap; align-items: center;">
+                                    {% if contact.contact_user.foto %}
+                                        <img src="{{ contact.contact_user.foto.url }}" style="width: 70px; height: 70px; border-radius: 70px; border: 2px solid black;">
+                                    {% else %}
+                                        <i class="fa-solid fa-user" style="font-size: 50px;"></i>
+                                    {% endif %}
+                                    <div style="margin-left: 20px;">
+                                        <p><i class="fa-solid fa-user" style="width: 20px;"></i> {{ req.contact_user.first_name }} {{ req.contact_user.last_name }}</p>
+                                        <p><i class="fa-solid fa-id-card" style="width: 20px;"></i> {{ req.contact_user.username }}</p>
+                                        <p><i class="fa-solid fa-envelope" style="width: 20px;"></i> {{ req.contact_user.email }}</p>
+                                    </div>
+                                </div>
+                                <div class="useroptions">
+                                    <a href="#" id="aceptbtn7{{ req.id }}" style="color: white; background-color: rgb(58, 58, 58); padding: 10px; border-radius: 20px; text-decoration: none; margin-right: 5px;">
+                                        <i class="fa-solid fa-check" style="width: 15px;"></i>&nbsp;Aceptar
+                                    </a>
+                                    <div id="acept7{{ req.id }}" class="modal">
+                                        <div class="modal-content">
+                                            <span class="closee7{{ req.id }} close" style="margin-top: -10px;">&times;</span>
+                                            <div class="modal-header">
+                                                <form action="{% url 'accept_contact_request' req.id %}" method="POST">
+                                                    {% csrf_token %}
+                                                    <br>
+                                                    <div align="center">
+                                                        <h2>¿Estás seguro de aceptar este contacto?</h2>
+                                                    </div>
+                                                    <br><br>
+                                                    <div align="center">
+                                                        <input type="submit" class="bnt" value="Aceptar" style="width: 90px;">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <br>
+                                        </div>
+                                    </div>
+                                    <script>
+                                        var acept7{{ req.id }} = document.getElementById("acept7{{ req.id }}");
+                                        var aceptbtn7{{ req.id }} = document.getElementById("aceptbtn7{{ req.id }}");
+                                        var spann7{{ req.id }} = document.getElementsByClassName("closee7{{ req.id }}")[0];
+                                        aceptbtn7{{ req.id }}.onclick = function() {
+                                            acept7{{ req.id }}.style.visibility = "visible";
+                                            acept7{{ req.id }}.style.opacity = 1;
+                                        }
+                
+                                        spann7{{ req.id }}.onclick = function() {
+                                            acept7{{ req.id }}.style.visibility = "hidden";
+                                            acept7{{ req.id }}.style.opacity = 0;
+                                        }
+                
+                                        window.onclick = function(event) {
+                                            if (event.target == acept7{{ req.id }}) {
+                                                acept7{{ req.id }}.style.visibility = "hidden";
+                                                acept7{{ req.id }}.style.opacity = 0;
+                                            }
+                                        }
+                                    </script>
+                                    
+                                    <a href="#" id="rejectbtn8{{ req.id }}" style="color: white; background-color: rgb(58, 58, 58); padding: 10px; border-radius: 20px; text-decoration: none; margin-right: 5px;">
+                                        <i class="fa-solid fa-x" style="width: 15px;"></i></i>&nbsp;Rechazar
+                                    </a>
+                                    <div id="reject8{{ req.id }}" class="modal">
+                                        <div class="modal-content">
+                                            <span class="closee8{{ req.id }} close" style="margin-top: -10px;">&times;</span>
+                                            <div class="modal-header">
+                                                <form action="{% url 'reject_contact_request' req.id %}" method="POST">
+                                                    {% csrf_token %}
+                                                    <br>
+                                                    <div align="center">
+                                                        <h2>¿Estás seguro de rechazar este contacto?</h2>
+                                                    </div>
+                                                    <br><br>
+                                                    <div align="center">
+                                                        <input type="submit" class="bnt" value="Aceptar" style="width: 90px;">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <br>
+                                        </div>
+                                    </div>
+                                    <script>
+                                        var reject8{{ req.id }} = document.getElementById("reject8{{ req.id }}");
+                                        var rejectbtn8{{ req.id }} = document.getElementById("rejectbtn8{{ req.id }}");
+                                        var spann8{{ req.id }} = document.getElementsByClassName("closee8{{ req.id }}")[0];
+                                        rejectbtn8{{ req.id }}.onclick = function() {
+                                            reject8{{ req.id }}.style.visibility = "visible";
+                                            reject8{{ req.id }}.style.opacity = 1;
+                                        }
+                
+                                        spann8{{ req.id }}.onclick = function() {
+                                            reject8{{ req.id }}.style.visibility = "hidden";
+                                            reject8{{ req.id }}.style.opacity = 0;
+                                        }
+                
+                                        window.onclick = function(event) {
+                                            if (event.target == reject8{{ req.id }}) {
+                                                reject8{{ req.id }}.style.visibility = "hidden";
+                                                reject8{{ req.id }}.style.opacity = 0;
+                                            }
+                                        }
+                                    </script>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            {% if sent_requests_pending %}
+            <div class="tabular--wrapper" style="margin-top: 10px; padding-top: 10px;">
+                <div class="table-container" style="height: auto;">
+                    <h2>Mis Solicitudes de Contacto Enviadas (Pendientes)</h2>
+                    {% for req in sent_requests_pending %}
+                        <div style="display: flex; flex-wrap: wrap; padding: 20px; background-color: rgb(235, 234, 234); width: 100%; margin-top: 10px; border-radius: 15px; align-items: center;">
+                            <div style="display: flex; flex-wrap: wrap; align-items: center;">
+                                {% if contact.contact_user.foto %}
+                                    <img src="{{ contact.contact_user.foto.url }}" style="width: 70px; height: 70px; border-radius: 70px; border: 2px solid black;">
+                                {% else %}
+                                    <i class="fa-solid fa-user" style="font-size: 50px;"></i>
+                                {% endif %}
+                                <div style="margin-left: 20px;">
+                                    <p><i class="fa-solid fa-user" style="width: 20px;"></i> {{ req.contact_user.first_name }} {{ req.contact_user.last_name }}</p>
+                                    <p><i class="fa-solid fa-id-card" style="width: 20px;"></i> {{ req.contact_user.username }}</p>
+                                    <p><i class="fa-solid fa-envelope" style="width: 20px;"></i> {{ req.contact_user.email }}</p>
+                                </div>
+                            </div>
+                            <div class="useroptions">
+                                <a href="#" id="rejectbtn5{{ req.id }}" style="color: white; background-color: rgb(58, 58, 58); padding: 10px; border-radius: 20px; text-decoration: none;">
+                                    <i class="fa-solid fa-trash" style="width: 15px;"></i>&nbsp;Eliminar
+                                </a>
+                                <div id="reject5{{ req.id }}" class="modal">
+                                    <div class="modal-content">
+                                        <span class="closee5{{ req.id }} close" style="margin-top: -10px;">&times;</span>
+                                        <div class="modal-header">
+                                            <form action="{% url 'cancel_contact_request' req.id %}" method="POST">
+                                                {% csrf_token %}
+                                                <br>
+                                                <div align="center">
+                                                    <h2>¿Estás seguro de eliminar esta solicitud?</h2>
+                                                </div>
+                                                <br><br>
+                                                <div align="center">
+                                                    <input type="submit" class="bnt" value="Continuar" style="width: 90px;">
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <br>
+                                    </div>
+                                </div>
+                                <script>
+                                    var reject5{{ req.id }} = document.getElementById("reject5{{ req.id }}");
+                                    var rejectbtn5{{ req.id }} = document.getElementById("rejectbtn5{{ req.id }}");
+                                    var spann5{{ req.id }} = document.getElementsByClassName("closee5{{ req.id }}")[0];
+                                    rejectbtn5{{ req.id }}.onclick = function() {
+                                        reject5{{ req.id }}.style.visibility = "visible";
+                                        reject5{{ req.id }}.style.opacity = 1;
+                                    }
+            
+                                    spann5{{ req.id }}.onclick = function() {
+                                        reject5{{ req.id }}.style.visibility = "hidden";
+                                        reject5{{ req.id }}.style.opacity = 0;
+                                    }
+            
+                                    window.onclick = function(event) {
+                                        if (event.target == reject5{{ req.id }}) {
+                                            reject5{{ req.id }}.style.visibility = "hidden";
+                                            reject5{{ req.id }}.style.opacity = 0;
+                                        }
+                                    }
+                                </script>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            <div class="tabular--wrapper" style="margin-top: 10px; padding-top: 10px;">
+                <div class="table-container" style="height: auto;">
+                    {% for contact in contactos %}
+                        <div style="display: flex; flex-wrap: wrap; padding: 20px; background-color: rgb(235, 234, 234); width: 100%; margin-top: 10px; border-radius: 15px; align-items: center;">
+                            <div style="display: flex; flex-wrap: wrap; align-items: center;">
+                                {% if contact.contact_user.foto %}
+                                    <img src="{{ contact.contact_user.foto.url }}" style="width: 70px; height: 70px; border-radius: 70px; border: 2px solid black;">
+                                {% else %}
+                                    <i class="fa-solid fa-user" style="font-size: 50px;"></i>
+                                {% endif %}
+                                <div style="margin-left: 20px;">
+                                    <p><i class="fa-solid fa-user" style="width: 20px;"></i> {{ contact.contact_user.first_name }} {{ contact.contact_user.last_name }}</p>
+                                    <p><i class="fa-solid fa-id-card" style="width: 20px;"></i> {{ contact.contact_user.username }}</p>
+                                    <p><i class="fa-solid fa-envelope" style="width: 20px;"></i> {{ contact.contact_user.email }}</p>
+                                </div>
+                            </div>
+                            <div class="useroptions">
+                                <!-- =========== Enlace para Chatear con Contacto =========  -->
+                                <a href="../chat/{{ contact.contact_user.id }}" style="color: white; background-color: rgb(58, 58, 58); padding: 10px; border-radius: 20px; text-decoration: none; margin-right: 5px;">
+                                    <i class="fa-solid fa-comment-dots" style="width: 15px;"></i>&nbsp;Chatear
+                                </a>
+                                <!-- =========== Eliminar Contacto =========  -->
+                                <a href="#" id="myBtnn2{{ contact.id }}" style="color: white; background-color: rgb(58, 58, 58); padding: 10px; border-radius: 20px; text-decoration: none;">
+                                    <i class="fa-solid fa-trash" style="width: 15px;"></i>&nbsp;Eliminar
+                                </a>
+                                <div id="myModall2{{ contact.id }}" class="modal">
+                                    <div class="modal-content">
+                                        <span class="closee2{{ contact.id }} close" style="margin-top: -10px;">&times;</span>
+                                        <div class="modal-header">
+                                            <form action="delete/{{ contact.id }}" method="POST">
+                                                {% csrf_token %}
+                                                <br>
+                                                <div align="center">
+                                                    <h2>¿Estás seguro de eliminar este contacto?</h2>
+                                                </div>
+                                                <br><br>
+                                                <div align="center">
+                                                    <input type="submit" class="bnt" value="Eliminar" style="width: 90px;">
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <br>
+                                    </div>
+                                </div>
+                                <script>
+                                    var modall2{{ contact.id }} = document.getElementById("myModall2{{ contact.id }}");
+                                    var btnn2{{ contact.id }} = document.getElementById("myBtnn2{{ contact.id }}");
+                                    var spann2{{ contact.id }} = document.getElementsByClassName("closee2{{ contact.id }}")[0];
+                                    btnn2{{ contact.id }}.onclick = function() {
+                                        modall2{{ contact.id }}.style.visibility = "visible";
+                                        modall2{{ contact.id }}.style.opacity = 1;
+                                    }
+            
+                                    spann2{{ contact.id }}.onclick = function() {
+                                        modall2{{ contact.id }}.style.visibility = "hidden";
+                                        modall2{{ contact.id }}.style.opacity = 0;
+                                    }
+            
+                                    window.onclick = function(event) {
+                                        if (event.target == modall{{ contact.id }}) {
+                                            modall2{{ contact.id }}.style.visibility = "hidden";
+                                            modall2{{ contact.id }}.style.opacity = 0;
+                                        }
+                                    }
+                                </script>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div align="center">
+                            <h3>NO TIENES CONTACTOS AGREGADOS.</h3>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <!-- =========== Script de Agregar Contacto =========  -->
+        <script>
+            var modal = document.getElementById("myModal");
+            var btn = document.getElementById("myBtn");
+            var span = document.getElementsByClassName("close")[0];
+            btn.onclick = function() {
+                modal.style.visibility = "visible";
+                modal.style.opacity = 1;
+            }
+
+            span.onclick = function() {
+                modal.style.visibility = "hidden";
+                modal.style.opacity = 0;
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.visibility = "hidden";
+                    modal.style.opacity = 0;
+                }
+            }
+        </script>
+        <script>
+            const botonMover = document.getElementById('sidebuton');
+            const cajaAMover = document.getElementById('sidebar');
+
+            let estaAbierto = false;
+
+            const posicionCerradoCaja = -110;
+            const posicionAbiertoCaja = 0;
+
+            const posicionCerradoBoton = 0;
+            const posicionAbiertoBoton = 300;
+
+            cajaAMover.style.left = `${posicionCerradoCaja}px`;
+            botonMover.style.left = `${posicionCerradoBoton}px`;
+
+            botonMover.addEventListener('click', () => {
+                if (!estaAbierto) {
+                    cajaAMover.style.left = `${posicionAbiertoCaja}px`;
+                    cajaAMover.style.width = `300px`;
+                    botonMover.style.left = `${posicionAbiertoBoton}px`;
+                    botonMover.style.transform = `rotate(90deg)`;
+                    estaAbierto = true;
+                } else {
+                    cajaAMover.style.left = `${posicionCerradoCaja}px`;
+                    cajaAMover.style.width = `110px`;
+                    botonMover.style.left = `${posicionCerradoBoton}px`;
+                    botonMover.style.transform = `rotate(270deg)`;
+                    estaAbierto = false;
+                }
+            });
+        </script>
+    </body>
+</html>
+{% endblock %}

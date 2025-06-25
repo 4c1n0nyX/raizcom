@@ -1,0 +1,327 @@
+{% extends 'success.html' %}
+{% block success %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <!-- =============== Cabeceras ================ -->		
+    <head>
+		<meta charset="UTF-8">
+ 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  		<title>RAIZCOM | Recursos</title>
+  		<link rel="manifest" href="{% static 'manifest.json' %}">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon" href="{% static 'img/icon-192x192.png' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+        <link rel="icon" type="image/x-icon" href="{% static 'img/LOGO_ICON.png' %}">
+	</head>
+    <body>
+        <!-- =============== Menú principal ================ -->
+        <div class="sidebuton" id="sidebuton">
+            <i class="fa-solid fa-circle-chevron-down"></i>
+        </div>
+        <div class="sidebar" id="sidebar">
+            <div class="logo"></div>
+            <ul class="menu">
+                <li class="active">
+                    <a href="#">
+                        <img style="width:35px; height: 35px;" src="{% static 'img/LOGO_ICON.png' %}">
+                        <span class="title" style="color: #ffffff;"><strong>RAIZCOM</strong></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../../">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Volver</span>
+                    </a>
+                </li>
+                <hr style="border: #b4baca solid 1px;">
+                <li>
+                    <a href="../../chat/">
+                        <i class="fa-solid fa-comment-dots"></i>
+                        <span>Chat General</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../../chat/alertas/">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>Alerta de Emergencias</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../../chat/grecursos/">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                        <span>Gestión de Recursos</span>
+                    </a>
+                </li>
+                <hr style="border: #b4baca solid 1px;">
+                {% for contact in contactos %}
+                    {% if contact.status == 'accepted' %}
+                        <li>
+                            <a href="../{{ contact.contact_user.pk }}">
+                                {% if contact.contact_user.foto %}
+                                    <img src="{{ contact.contact_user.foto.url }}" style="width: 25px; height: 25px; border-radius: 25px; border: 2px solid rgb(255, 255, 255);">
+                                {% else %}
+                                    <i class="fa-solid fa-user" style="width: 20px;"></i>
+                                {% endif %}
+                                <span>{{ contact.contact_user.first_name }} {{ contact.contact_user.last_name }}</span>
+                            </a>
+                        </li>
+                    {% endif %}    
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- ========================= Menú usuario ==================== -->
+        <div class="main--content">
+            <div class="header--wrapper">
+                <div class="header--title">
+                    <h2>RAIZCOM | Gestión de Recursos</h2>
+                </div>
+                <div class="user--info">
+                    <a href="../../usuario/" class="user--link">
+                        <div class="box">
+                            {% if request.user.foto %}
+                                <img src="{{ request.user.foto.url }}">
+                            {% else %}
+                                <i class="fa-solid fa-circle-user"></i>
+                            {% endif %}
+                            <h3>{{request.user.first_name}} {{request.user.last_name}}</h3>
+                        </div>
+                    </a>
+                    |
+                    <li class="butun">
+                        <a href="{% url 'logout' %}" style="text-decoration: none;">
+                            <label class="switch">
+                                <i class="fa-solid fa-power-off" style="color: #030c1c;"></i>
+                            </label>
+                        </a>
+                    </li>
+                </div>
+            </div>
+            <!-- ===================== TABLA DE RECURSOS DISPONIBLES ====================  -->
+            <div class="tabular--wrapper" style="margin-top: 10px; padding-top: 10px;">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tipo de Recursos</th>
+                                <th>Fecha</th>
+                                <th>Lugar</th>
+                                <th>Precio (BS)</th>
+                                <th>Estatus</th>
+                                <th>Acciones</th>
+                            </tr>
+                            <tbody>
+                                {% for archivo in publicacionesa %}
+                                    <tr>
+                                        <td class="tdc">{{ archivo.tipo_recurso }}</td>
+                                        <td class="tdc">{{ archivo.fecha|date:"d/m/Y" }}</td>
+                                        <td class="tdc">{{ archivo.lugar }}</td>
+                                        {% if archivo.precio %}
+                                            <td class="tdc">{{ archivo.precio }}</td>
+                                        {% else %}
+                                            <td class="tdc">N/A</td>
+                                        {% endif %}
+                                        <td class="tdc">
+                                            {{ archivo.estatus }}
+                                            {% if archivo.pagos_del_usuario_actual %}
+                                                - REPORTADO
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="tdc1">
+                                                {% if archivo.pago == True %}
+                                                    <!-- ===================== REPORTAR PAGO ====================  -->
+                                                    <a href="#!" id="myBtnn2{{ archivo.id }}" style="color: black;" title="Reportar Pago"><i class="fa-solid fa-file-invoice"></i></a>
+                                                    <div id="myModall2{{ archivo.id }}" class="modal">
+                                                        <div class="modal-content">
+                                                            <span class="closee2{{ archivo.id }} close" style="margin-top: -10px;">&times;</span>
+                                                            <div class="modal-header">
+                                                                <h2 style="text-align: center;">Reportar Pago</h2>
+                                                            </div>
+                                                            <br>
+                                                            <form method="POST" action="reportar/{{ archivo.pk }}" enctype="multipart/form-data">
+                                                                {% csrf_token %}
+                                                                <div class="form-group">
+                                                                    <div class="form-items">
+                                                                        <div id="file-uploadd{{ archivo.pk }}" class="file-upload">
+                                                                            <input type="file" name="{{ form1.comprobante.html_name }}" id="fileInputd{{ archivo.pk }}" accept="image/*">
+                                                                            <div id="fileDisplayd{{ archivo.pk }}" class="file-display">
+                                                                            <i id="fileIcond{{ archivo.pk }}" class="fa-solid fa-image" style="display: none;"></i>
+                                                                            <span id="fileNamed{{ archivo.pk }}" style="display: none;">Nombre del archivo</span>
+                                                                            </div>
+                                                                            <p style="margin-top: 3px;" id="uploadMessaged{{ archivo.pk }}">Arrastra y suelta, haz clic o pega un archivo aquí</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <br>
+                                                                <div align="center">
+                                                                    <input type="submit" class="bnt" value="Enviar" style="width: 90px;">
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                    <script>
+                                                        var modall2{{ archivo.id }} = document.getElementById("myModall2{{ archivo.id }}");
+                                                        var btnn2{{ archivo.id }} = document.getElementById("myBtnn2{{ archivo.id }}");
+                                                        var spann2{{ archivo.id }} = document.getElementsByClassName("closee2{{ archivo.id }}")[0];
+                                                        btnn2{{ archivo.id }}.onclick = function() {
+                                                            modall2{{ archivo.id }}.style.visibility = "visible";
+                                                            modall2{{ archivo.id }}.style.opacity = 1;
+                                                        }
+
+                                                        spann2{{ archivo.id }}.onclick = function() {
+                                                            modall2{{ archivo.id }}.style.visibility = "hidden";
+                                                            modall2{{ archivo.id }}.style.opacity = 0;
+                                                        }
+
+                                                        window.onclick = function(event) {
+                                                            if (event.target == modall{{ archivo.id }}) {
+                                                                modall2{{ archivo.id }}.style.visibility = "hidden";
+                                                                modall2{{ archivo.id }}.style.opacity = 0;
+                                                            }
+                                                        }
+                                                    </script>
+                                                    <script>
+                                                        (function () {
+                                                            const fileUploadd{{ archivo.pk }} = document.getElementById('file-uploadd{{ archivo.pk }}');
+                                                            const fileInputd{{ archivo.pk }} = document.getElementById('fileInputd{{ archivo.pk }}');
+                                                            const fileDisplayd{{ archivo.pk }} = document.getElementById('fileDisplayd{{ archivo.pk }}');
+                                                            const fileIcond{{ archivo.pk }} = document.getElementById('fileIcond{{ archivo.pk }}');
+                                                            const fileNamed{{ archivo.pk }} = document.getElementById('fileNamed{{ archivo.pk }}');
+                                                            const uploadMessaged{{ archivo.pk }} = document.getElementById('uploadMessaged{{ archivo.pk }}');
+
+                                                            function handleFile(file) {
+                                                                fileNamed{{ archivo.pk }}.textContent = file.name;
+                                                                fileNamed{{ archivo.pk }}.style.display = 'inline';
+                                                                fileIcond{{ archivo.pk }}.src = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                                                                fileIcond{{ archivo.pk }}.style.display = 'inline';
+                                                                uploadMessaged{{ archivo.pk }}.style.display = 'none';
+                                                            }
+
+                                                            fileUploadd{{ archivo.pk }}.addEventListener('click', () => {
+                                                                fileInputd{{ archivo.pk }}.click();
+                                                            });
+
+                                                            fileUploadd{{ archivo.pk }}.addEventListener('dragover', (event) => {
+                                                                event.preventDefault();
+                                                                fileUploadd{{ archivo.pk }}.style.backgroundColor = '#e0e0e0';
+                                                            });
+
+                                                            fileUploadd{{ archivo.pk }}.addEventListener('dragleave', () => {
+                                                                fileUploadd{{ archivo.pk }}.style.backgroundColor = '';
+                                                            });
+
+                                                            fileUploadd{{ archivo.pk }}.addEventListener('drop', (event) => {
+                                                                event.preventDefault();
+                                                                fileUploadd{{ archivo.pk }}.style.backgroundColor = '';
+                                                                const filed{{ archivo.pk }} = event.dataTransfer.files[0];
+                                                                if (filed{{ archivo.pk }}) {
+                                                                    handleFile(filed{{ archivo.pk }});
+                                                                }
+                                                            });
+
+                                                            fileInputd{{ archivo.pk }}.addEventListener('change', (event) => {
+                                                                const filed{{ archivo.pk }} = event.target.files[0];
+                                                                if (filed{{ archivo.pk }}) {
+                                                                    handleFile(filed{{ archivo.pk }});
+                                                                }
+                                                            });
+
+                                                            document.addEventListener('paste', (event) => {
+                                                                const itemsd{{ archivo.pk }} = event.clipboardData.items;
+                                                                for (let i = 0; i < itemsd{{ archivo.pk }}.length; i++) {
+                                                                    if (itemsd{{ archivo.pk }}[i].kind === 'file') {
+                                                                        const filed{{ archivo.pk }} = itemsd{{ archivo.pk }}[i].getAsFile();
+                                                                        if (filed{{ archivo.pk }}) {
+                                                                            handleFile(filed{{ archivo.pk }});
+                                                                        }
+                                                                    }
+                                                                }
+                                                            });
+                                                        })();
+                                                    </script>
+                                                    {% if archivo.pagos_del_usuario_actual %}
+                                                        <!-- ===================== VER PAGO ====================  -->
+                                                        <a href="#!" id="verimagen{{ archivo.id }}" style="color: black;" title="Ver imagen"><i class="fa-solid fa-eye iconojo"></i></a>
+                                                        <div id="verimagenmodal{{ archivo.id }}" class="modal">
+                                                            <div class="modal-content">
+                                                                <span class="closeeimagen{{ archivo.id }} close" style="margin-top: -10px;">&times;</span>
+                                                                <div class="modal-header">
+                                                                    <div align="center">
+                                                                        <img src="{{ archivo.pagos_del_usuario_actual.0.comprobante.url }}" class="userimagen">                        
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <script>
+                                                            var verimagenmodal{{ archivo.id }} = document.getElementById("verimagenmodal{{ archivo.id }}");
+                                                            var verimagen{{ archivo.id }} = document.getElementById("verimagen{{ archivo.id }}");
+                                                            var spannver{{ archivo.id }} = document.getElementsByClassName("closeeimagen{{ archivo.id }}")[0];
+                                                            verimagen{{ archivo.id }}.onclick = function() {
+                                                                verimagenmodal{{ archivo.id }}.style.visibility = "visible";
+                                                                verimagenmodal{{ archivo.id }}.style.opacity = 1;
+                                                            }
+
+                                                            spannver{{ archivo.id }}.onclick = function() {
+                                                                verimagenmodal{{ archivo.id }}.style.visibility = "hidden";
+                                                                verimagenmodal{{ archivo.id }}.style.opacity = 0;
+                                                            }
+
+                                                            window.onclick = function(event) {
+                                                                if (event.target == modall{{ archivo.id }}) {
+                                                                    verimagenmodal{{ archivo.id }}.style.visibility = "hidden";
+                                                                    verimagenmodal{{ archivo.id }}.style.opacity = 0;
+                                                                }
+                                                            }
+                                                        </script>
+                                                    {% endif %}
+                                                {% else %}
+                                                    N/A
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        const botonMover = document.getElementById('sidebuton');
+        const cajaAMover = document.getElementById('sidebar');
+
+        let estaAbierto = false;
+
+        const posicionCerradoCaja = -110;
+        const posicionAbiertoCaja = 0;
+
+        const posicionCerradoBoton = 0;
+        const posicionAbiertoBoton = 300;
+
+        cajaAMover.style.left = `${posicionCerradoCaja}px`;
+        botonMover.style.left = `${posicionCerradoBoton}px`;
+
+        botonMover.addEventListener('click', () => {
+            if (!estaAbierto) {
+                cajaAMover.style.left = `${posicionAbiertoCaja}px`;
+                cajaAMover.style.width = `300px`;
+                botonMover.style.left = `${posicionAbiertoBoton}px`;
+                botonMover.style.transform = `rotate(90deg)`;
+                estaAbierto = true;
+            } else {
+                cajaAMover.style.left = `${posicionCerradoCaja}px`;
+                cajaAMover.style.width = `110px`;
+                botonMover.style.left = `${posicionCerradoBoton}px`;
+                botonMover.style.transform = `rotate(270deg)`;
+                estaAbierto = false;
+            }
+        });
+    </script>
+</html>
+{% endblock %}

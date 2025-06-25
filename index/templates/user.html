@@ -1,0 +1,335 @@
+{% extends 'success.html' %}
+{% block success %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <!-- =============== Cabeceras ================ -->		
+    <head>
+		<meta charset="UTF-8">
+ 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  		<title>RAIZCOM | Usuario</title>
+  		<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+        <link rel="manifest" href="{% static 'manifest.json' %}">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon" href="{% static '/img/icon-192x192.png' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+        <link rel="icon" type="image/x-icon" href="{% static '/img/LOGO_ICON.png' %}">
+	</head>
+    <body>
+        <!-- =============== Menú principal ================ -->
+         <div class="sidebuton" id="sidebuton">
+            <i class="fa-solid fa-circle-chevron-down"></i>
+        </div>
+        <div class="sidebar" id="sidebar">
+            <div class="logo"></div>
+            <ul class="menu">
+                <li class="active">
+                    <a href="#">
+                        <img style="width:35px; height: 35px;" src="{% static 'img/LOGO_ICON.png' %}">
+                        <span class="title" style="color: #ffffff;"><strong>RAIZCOM</strong></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../../">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Volver</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- ========================= Menú usuario ==================== -->
+        <div class="main--content">
+            <div class="header--wrapper">
+                <div class="header--title">
+                    <h2>RAIZCOM | Usuario</h2>
+                </div>
+                <div class="user--info">
+                    <h3 style="color: #030c1c;">{{request.user.first_name}} {{request.user.last_name}}</h3>
+                    <li class="butun">
+                        <a href="{% url 'logout' %}" style="text-decoration: none;">
+                            <label class="switch">
+                                <i class="fa-solid fa-power-off" style="color: #030c1c;"></i>
+                            </label>
+                        </a>
+                    </li>
+                </div>
+            </div>
+            <!-- ===================== Panel de Usuario ====================  -->
+            <div class="tabular--wrapper" style="margin-top: 10px; padding-top: 10px;">
+                <div class="table-container" style="height: auto;">
+                    <div style="display: flex; flex-wrap: wrap; padding: 20px; background-color: rgb(235, 234, 234); width: 100%; margin-top: 10px; border-radius: 15px; align-items: center;">
+                        <div style="display: flex; flex-wrap: wrap; align-items: center;">
+                            {% if request.user.foto %}
+                                <img src="{{ request.user.foto.url }}" style="width: 70px; height: 70px; border-radius: 70px; border: 2px solid black;">
+                            {% else %}
+                                <i class="fa-solid fa-user" style="font-size: 50px;"></i>
+                            {% endif %}
+                            <div style="margin-left: 20px;">
+                                <p><i class="fa-solid fa-user" style="width: 20px;"></i> {{ request.user.first_name }} {{ request.user.last_name }}</p>
+                                <p><i class="fa-solid fa-id-card" style="width: 20px;"></i> {{ request.user.username }}</p>
+                                <p><i class="fa-solid fa-envelope" style="width: 20px;"></i> {{ request.user.email }}</p>
+                            </div>
+                        </div>
+                        <div class="useroptions">
+                            <!-- ===================== Editar Usuario ====================  -->
+                            <a href="#" id="myBtnn3" style="color: white; background-color: rgb(58, 58, 58); padding: 10px; border-radius: 20px; text-decoration: none; margin-right: 5px;">
+                                <i class="fa-solid fa-pen" style="width: 15px;"></i>&nbsp;Editar
+                            </a>
+                            <div id="myModall3" class="modal">
+                                <div class="modal-content">
+                                    <span class="closee3 close" style="margin-top: -10px;">&times;</span>
+                                    <div class="modal-header">
+                                        <h2>Modificar Usuario</h2>
+                                    </div>
+                                    <br>
+                                    <form method="POST" action="update/{{ request.user.pk }}">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <div class="form-items">
+                                                <label class="modal-titulos">Teléfono</label>
+                                                <br>
+                                                <input required type="text" class="form-control" name="{{form2.telefono.html_name}}" placeholder="Ingrese el teléfono" value="{{ request.user.telefono }}">
+                                            </div>
+                                            <div class="form-items">
+                                                <label class="modal-titulos">Correo</label>
+                                                <br>
+                                                <input required type="text" class="form-control" name="{{form2.email.html_name}}" placeholder="Ingrese el correo" value="{{ request.user.email }}">
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div align="center">
+                                            <input type="submit" class="bnt" value="Enviar" style="width: 90px;">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <script>
+                                var modall3 = document.getElementById("myModall3");
+                                var btnn3 = document.getElementById("myBtnn3");
+                                var spann3 = document.getElementsByClassName("closee3")[0];
+                                btnn3.onclick = function() {
+                                    modall3.style.visibility = "visible";
+                                    modall3.style.opacity = 1;
+                                }
+                            
+                                spann3.onclick = function() {
+                                    modall3.style.visibility = "hidden";
+                                    modall3.style.opacity = 0;
+                                }
+                            
+                                window.onclick = function(event) {
+                                    if (event.target == modall3) {
+                                        modall3.style.visibility = "hidden";
+                                        modall3.style.opacity = 0;
+                                    }
+                                }
+                            </script>
+                            <!-- ===================== Editar Contraseña de Usuarios ====================  -->
+                            <a href="#" id="myBtnn4" style="color: white; background-color: rgb(58, 58, 58); padding: 10px; border-radius: 20px; text-decoration: none; margin-right: 5px;">
+                                <i class="fa-solid fa-lock" style="width: 15px;"></i>&nbsp;Editar Contraseña
+                            </a>
+                            <div id="myModall4" class="modal">
+                                <div class="modal-content">
+                                    <span class="closee4 close" style="margin-top: -10px;">&times;</span>
+                                    <div class="modal-header">
+                                        <h2>Modificar Contraseña</h2>
+                                    </div>
+                                    <br>
+                                    <form method="POST" action="updatep/{{ request.user.pk }}">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <div class="form-items">
+                                                <label>Contraseña</label>
+                                                <br>
+                                                <input required type="password" class="form-control" name="{{form3.password.html_name}}" placeholder="Ingrese la contraseña">
+                                                <p style="font-size: 10px; text-align: justify; color: #7a1f24;">Debe contener longitud mínima de 8 carácteres, mayusculas, minúsculas, números y carácteres especiales.</p>
+                                            </div>
+                                            <div class="form-items">
+                                                <label>Confirmar Contraseña</label>
+                                                <br>
+                                                <input required type="password" class="form-control" name="{{form3.password_confirm.html_name}}" placeholder="Confirmar contraseña">
+                                                <p style="font-size: 10px; text-align: justify; color: #7a1f24;">Ambas contraseñas debe coincidir.</p>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div align="center">
+                                            <input type="submit" class="bnt" value="Enviar" style="width: 90px;">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <script>
+                                var modall4 = document.getElementById("myModall4");
+                                var btnn4 = document.getElementById("myBtnn4");
+                                var spann4 = document.getElementsByClassName("closee4")[0];
+                                btnn4.onclick = function() {
+                                    modall4.style.visibility = "visible";
+                                    modall4.style.opacity = 1;
+                                }
+                            
+                                spann4.onclick = function() {
+                                    modall4.style.visibility = "hidden";
+                                    modall4.style.opacity = 0;
+                                }
+                            
+                                window.onclick = function(event) {
+                                    if (event.target == modall4) {
+                                        modall4.style.visibility = "hidden";
+                                        modall4.style.opacity = 0;
+                                    }
+                                }
+                            </script>
+                            <!-- ===================== Editar Foto de Usuario ====================  -->
+                            <a href="#" id="myBtnn2" style="color: white; background-color: rgb(58, 58, 58); padding: 10px; border-radius: 20px; text-decoration: none; margin-right: 5px;">
+                                <i class="fa-solid fa-image" style="width: 15px;"></i>&nbsp;Editar Imagen
+                            </a>
+                            <div id="myModall2" class="modal">
+                                <div class="modal-content">
+                                    <span class="closee2 close" style="margin-top: -10px;">&times;</span>
+                                    <div class="modal-header">
+                                        <h2 style="text-align: center;">Modificar Imagen</h2>
+                                    </div>
+                                    <br>
+                                    <form method="POST" action="updatei/{{ request.user.pk }}" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <div class="form-items">
+                                                <div id="file-uploadd" class="file-upload">
+                                                    <input type="file" name="{{ form4.foto.html_name }}" id="fileInputd" accept="image/*">
+                                                    <div id="fileDisplayd" class="file-display">
+                                                    <i id="fileIcond" class="fa-solid fa-image" style="display: none;"></i>
+                                                    <span id="fileNamed" style="display: none;">Nombre del archivo</span>
+                                                    </div>
+                                                    <p style="margin-top: 3px;" id="uploadMessaged">Arrastra y suelta, haz clic o pega un archivo aquí</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div align="center">
+                                            <input type="submit" class="bnt" value="Enviar" style="width: 90px;">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <script>
+                                var modall2 = document.getElementById("myModall2");
+                                var btnn2 = document.getElementById("myBtnn2");
+                                var spann2 = document.getElementsByClassName("closee2")[0];
+                                btnn2.onclick = function() {
+                                    modall2.style.visibility = "visible";
+                                    modall2.style.opacity = 1;
+                                }
+
+                                spann2.onclick = function() {
+                                    modall2.style.visibility = "hidden";
+                                    modall2.style.opacity = 0;
+                                }
+
+                                window.onclick = function(event) {
+                                    if (event.target == modall2) {
+                                        modall2.style.visibility = "hidden";
+                                        modall2.style.opacity = 0;
+                                    }
+                                }
+                            </script>
+                            <script>
+                                (function () {
+                                    const fileUploadd = document.getElementById('file-uploadd');
+                                    const fileInputd = document.getElementById('fileInputd');
+                                    const fileDisplayd = document.getElementById('fileDisplayd');
+                                    const fileIcond = document.getElementById('fileIcond');
+                                    const fileNamed = document.getElementById('fileNamed');
+                                    const uploadMessaged = document.getElementById('uploadMessaged');
+
+                                    function handleFile(file) {
+                                        fileNamed.textContent = file.name;
+                                        fileNamed.style.display = 'inline';
+                                        fileIcond.src = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                                        fileIcond.style.display = 'inline';
+                                        uploadMessaged.style.display = 'none';
+                                    }
+
+                                    fileUploadd.addEventListener('click', () => {
+                                        fileInputd.click();
+                                    });
+
+                                    fileUploadd.addEventListener('dragover', (event) => {
+                                        event.preventDefault();
+                                        fileUploadd.style.backgroundColor = '#e0e0e0';
+                                    });
+
+                                    fileUploadd.addEventListener('dragleave', () => {
+                                        fileUploadd.style.backgroundColor = '';
+                                    });
+
+                                    fileUploadd.addEventListener('drop', (event) => {
+                                        event.preventDefault();
+                                        fileUploadd.style.backgroundColor = '';
+                                        const filed = event.dataTransfer.files[0];
+                                        if (filed) {
+                                            handleFile(filed);
+                                        }
+                                    });
+
+                                    fileInputd.addEventListener('change', (event) => {
+                                        const filed = event.target.files[0];
+                                        if (filed) {
+                                            handleFile(filed);
+                                        }
+                                    });
+
+                                    document.addEventListener('paste', (event) => {
+                                        const itemsd = event.clipboardData.items;
+                                        for (let i = 0; i < itemsd.length; i++) {
+                                            if (itemsd[i].kind === 'file') {
+                                                const filed = itemsd[i].getAsFile();
+                                                if (filed) {
+                                                    handleFile(filed);
+                                                }
+                                            }
+                                        }
+                                    });
+                                })();
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        const botonMover = document.getElementById('sidebuton');
+        const cajaAMover = document.getElementById('sidebar');
+
+        let estaAbierto = false;
+
+        const posicionCerradoCaja = -110;
+        const posicionAbiertoCaja = 0;
+
+        const posicionCerradoBoton = 0;
+        const posicionAbiertoBoton = 300;
+
+        cajaAMover.style.left = `${posicionCerradoCaja}px`;
+        botonMover.style.left = `${posicionCerradoBoton}px`;
+
+        botonMover.addEventListener('click', () => {
+            if (!estaAbierto) {
+                cajaAMover.style.left = `${posicionAbiertoCaja}px`;
+                cajaAMover.style.width = `300px`;
+                botonMover.style.left = `${posicionAbiertoBoton}px`;
+                botonMover.style.transform = `rotate(90deg)`;
+                estaAbierto = true;
+            } else {
+                cajaAMover.style.left = `${posicionCerradoCaja}px`;
+                cajaAMover.style.width = `110px`;
+                botonMover.style.left = `${posicionCerradoBoton}px`;
+                botonMover.style.transform = `rotate(270deg)`;
+                estaAbierto = false;
+            }
+        });
+    </script>
+</html>
+{% endblock %}

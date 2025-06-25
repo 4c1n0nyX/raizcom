@@ -1,0 +1,713 @@
+{% extends 'success.html' %}
+{% block success %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <!-- =============== Cabeceras ================ -->	
+	<head>
+		<meta charset="UTF-8">
+ 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  		<title>RAIZCOM | Usuarios</title>
+  		<link rel="manifest" href="{% static 'manifest.json' %}">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon" href="{% static '/img/icon-192x192.png' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+        <link rel="icon" type="image/x-icon" href="{% static '/img/LOGO_ICON.png' %}">
+	</head>
+    <body>
+        <!-- =============== Menú principal ================ -->
+        <div class="sidebuton" id="sidebuton">
+            <i class="fa-solid fa-circle-chevron-down"></i>
+        </div>
+        <div class="sidebar" id="sidebar">
+            <div class="logo"></div>
+            <ul class="menu">
+                <li class="active">
+                    <a href="#">
+                        <img style="width:35px; height: 35px;" src="{% static 'img/LOGO_ICON.png' %}">
+                        <span class="title"><strong>RAIZCOM</strong></span>
+                    </a>
+                </li>
+                <li class="logout.new">
+                    <a href="../">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Volver</span>
+                    </a>
+                </li>
+                <hr style="border: #b4baca solid 1px;">
+                <li>
+                    <a href="../usuarios/">
+                        <i class="fa-solid fa-users"></i>
+                        <span>Usuarios</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../usuarios/comunidad/">
+                        <i class="fa-solid fa-people-roof"></i>
+                        <span>Comunidades</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- ========================= Menú usuario ==================== -->
+        <div class="main--content">
+            <div class="header--wrapper">
+                <div class="header--title">
+                    <h2>RAIZCOM | Usuarios</h2>
+                </div>
+                <div class="user--info">
+                    <a href="../usuario/" class="user--link">
+                        <div class="box">
+                            {% if request.user.foto %}
+                                <img src="{{ request.user.foto.url }}">
+                            {% else %}
+                                <i class="fa-solid fa-circle-user"></i>
+                            {% endif %}
+                            <h3>{{request.user.first_name}} {{request.user.last_name}}</h3>
+                        </div>
+                    </a>
+                    |
+                    <li class="butun">
+                        <a href="{% url 'logout' %}" style="text-decoration: none;">
+                            <label class="switch">
+                                <i class="fa-solid fa-power-off" style="color: #030c1c;"></i>
+                            </label>
+                        </a>
+                    </li>
+                </div>
+            </div>
+            <!-- ======================= Agregar Usuarios ======================  -->
+            <div class="tabular--wrapper">
+                <h3 class="main--title"></h3>
+                <div class="user--info2">
+                    <form method="GET" action="{% url 'consultar_usuarios' accion='consultar' %}">
+                        <div class="searh--box">
+                            <input type="text" name="nombre" placeholder="Buscar">
+                            <button type="submit" class="myBtn btn1">
+                                <i class="fa-brands fa-searchengin" style="color: #FFFFFF;"></i>
+                            </button>              
+                            <br>
+                            <button type="button" class="myBtn" onclick="location.href='{% url 'usuarios' %}'">
+                                <i class="fa-solid fa-broom" style="color: #FFFFFF;"></i>
+                            </button>      
+                        </div>
+                    </form>
+                    <div class="searchbb">
+                        <button id="myBtn" class="bt">Agregar</button>
+                    </div>
+                    <center>
+                        <section class="ulpgcds-pager">
+                            <ul class="ulpgcds-pager-ul">
+                                {%if usersl.has_previous %} {# whether the previous page exists #}
+                                    <li class="ulpgcds-pageritem ulpgcds-pageritem--prev">
+                                        <a class="pagination__link" href="?page={{usersl.previous_page_number}}" title="Ir a la página anterior"><span class="visually-hidden">Anterior</span></a>
+                                    </li>
+                                {% endif %}
+                                {% for i in usersl.paginator.page_range %}
+                                    {% if usersl.number == i %}
+                                        <li class="ulpgcds-pageritem ulpgcds-pageritem--is-active">
+                                            <a class="pagination__link" href="?page={{usersl.number}}">{{ i }}</a>
+                                        </li>
+                                    {% else %}
+                                        <li><a href="?page={{ i }}">{{ i }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                                {%if usersl.has_next %} {# whether the next page exists #}
+                                    <li class="ulpgcds-pageritem ulpgcds-pageritem--next">
+                                        <a class="pagination__link" href="?page={{usersl.next_page_number}}" title="Ir a la página siguiente">
+                                            <span class="visually-hidden">Siguiente</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </section>
+                    </center>
+                </div>
+            </div>
+            <!-- ======================= Formulario Agregar Usuario ======================  -->       
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" style="margin-top: -10px;">&times;</span>
+                    <div class="modal-header">
+                        <h2>Agregar Usuario</h2>
+                    </div>
+                    <br>
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="form-items">
+                                <label>Cédula</label>
+                                <br>
+                                <input required type="text" class="form-control" name="{{form1.username.html_name}}" placeholder="Ingrese el nombre de usuario">
+                            </div>
+                            <div class="form-items">
+                                <label>Contraseña</label>
+                                <br>
+                                <input required type="password" class="form-control" name="{{form1.password.html_name}}" placeholder="Ingrese la contraseña">
+                                <p style="font-size: 10px; text-align: justify; color: #7a1f24;">Debe contener longitud mínima de 8 carácteres, mayusculas, minúsculas, números y carácteres especiales.</p>
+                            </div>
+                            <div class="form-items">
+                                <label>Confirmar Contraseña</label>
+                                <br>
+                                <input required type="password" class="form-control" name="{{form1.password_confirm.html_name}}" placeholder="Confirmar contraseña">
+                                <p style="font-size: 10px; text-align: justify; color: #7a1f24;">Ambas contraseñas debe coincidir.</p>
+                            </div>
+                            <div class="form-items">
+                                <label>Nombre</label>
+                                <br>
+                                <input required type="text" class="form-control" name="{{form1.first_name.html_name}}" placeholder="Ingrese el nombre">
+                            </div>
+                            <div class="form-items">
+                                <label>Apellido</label>
+                                <br>
+                                <input required type="text" class="form-control" name="{{form1.last_name.html_name}}" placeholder="Ingrese el apellido">
+                            </div>
+                            <div class="form-items">
+                                <label>Teléfono</label>
+                                <br>
+                                <input required type="text" class="form-control" name="{{form1.telefono.html_name}}" placeholder="Ingrese el teléfono">
+                            </div>
+                            <div class="form-items">
+                                <label>Correo</label>
+                                <br>
+                                <input required type="text" class="form-control" name="{{form1.email.html_name}}" placeholder="Ingrese el correo">
+                            </div>
+                            <div class="form-items">
+                                <label>Comunidad</label>
+                                <br>
+                                <select required name="{{form1.comunidad.html_name}}" class="form-control">
+                                    <option value="" disabled selected> Selección</option>
+                                    {% for comunidad in comunidades %}
+                                        <option value="{{ comunidad.comunidad }}">{{ comunidad.comunidad }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-items">
+                                <label>Foto</label>
+                                <div id="file-upload" class="file-upload">
+                                    <input type="file" name="{{ form1.foto.html_name }}" id="fileInput" accept="image/*">
+                                    <div id="fileDisplay" class="file-display">
+                                    <i id="fileIcon" class="fa-solid fa-image" style="display: none;"></i>
+                                    <span id="fileName" style="display: none;">Nombre del archivo</span>
+                                    </div>
+                                    <p style="margin-top: 3px;" id="uploadMessage">Arrastra y suelta, haz clic o pega un archivo aquí</p>
+                                </div>
+                            </div>
+                            <div class="form-items">
+                                <label>Tipo de Usuario</label>
+                                <br>
+                                <select required name="tipo" class="form-control">
+                                    <option value="" disabled selected> Selección</option>
+                                    {% for grupo in grupos %}
+                                        <option value="{{ grupo.name }}">{{ grupo.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <br>
+                        <div align="center">
+                            <input type="submit" class="bnt" value="Enviar" style="width: 90px;">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- ===================== Tabla de Usuarios ====================  -->
+            <div class="tabular--wrapper" style="margin-top: 10px; padding-top: 10px;">
+                <div class="table-container">           
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cédula</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>Teléfono</th>
+                                <th>Correo</th>
+                                <th>Comunidad</th>
+                                <th>Foto</th>
+                                <th>Tipo</th>
+                                <th>Acciones</th>
+                            </tr>
+                            <tbody>
+                                {% for archivo in usersl %}
+                                    {% if archivo.username != 'alertas_bot' %}
+                                        <tr>
+                                            <td class="tdc">{{ archivo.username }}</td>
+                                            <td class="tdc">{{ archivo.first_name }}</td>
+                                            <td class="tdc">{{ archivo.last_name }}</td>
+                                            <td class="tdc">{{ archivo.telefono }}</td>
+                                            <td class="tdc">{{ archivo.email }}</td>
+                                            <td class="tdc">{{ archivo.comunidad }}</td>
+                                            <td class="tdc">
+                                                <a href="#!" id="verimagen{{ archivo.id }}" style="color: black;" title="Ver imagen"><i class="fa-solid fa-eye iconojo" style="font-size: 25px;"></i></a>
+                                                <div id="verimagenmodal{{ archivo.id }}" class="modal">
+                                                    <div class="modal-content">
+                                                        <span class="closeeimagen{{ archivo.id }} close" style="margin-top: -10px;">&times;</span>
+                                                        <div class="modal-header">
+                                                            <div align="center">
+                                                                {% if archivo.foto %}
+                                                                    <img src="{{ archivo.foto.url }}" class="userimagen">
+                                                                {% else %}
+                                                                    <p>No hay imagen disponible</p>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <script>
+                                                    var verimagenmodal{{ archivo.id }} = document.getElementById("verimagenmodal{{ archivo.id }}");
+                                                    var verimagen{{ archivo.id }} = document.getElementById("verimagen{{ archivo.id }}");
+                                                    var spannver{{ archivo.id }} = document.getElementsByClassName("closeeimagen{{ archivo.id }}")[0];
+                                                    verimagen{{ archivo.id }}.onclick = function() {
+                                                        verimagenmodal{{ archivo.id }}.style.visibility = "visible";
+                                                        verimagenmodal{{ archivo.id }}.style.opacity = 1;
+                                                    }
+
+                                                    spannver{{ archivo.id }}.onclick = function() {
+                                                        verimagenmodal{{ archivo.id }}.style.visibility = "hidden";
+                                                        verimagenmodal{{ archivo.id }}.style.opacity = 0;
+                                                    }
+
+                                                    window.onclick = function(event) {
+                                                        if (event.target == verimagenmodal{{ archivo.id }}) {
+                                                            verimagenmodal{{ archivo.id }}.style.visibility = "hidden";
+                                                            verimagenmodal{{ archivo.id }}.style.opacity = 0;
+                                                        }
+                                                    }
+                                                </script>
+                                            </td>
+                                            <td class="tdc">
+                                                {% for group in archivo.groups.all %}
+                                                    {{ group.name }}
+                                                {% endfor %}
+                                            </td>
+                                            <td class="tdc1">
+                                                <!-- ===================== Editar Usuario ====================  -->
+                                                {% if archivo.pk != 1 %}
+                                                    <a href="#!" id="myBtnn3{{ archivo.id }}" style="color: black;" title="Modificar"><i class="fa-solid fa-pen-to-square"></i></a>
+                                                    <div id="myModall3{{ archivo.id }}" class="modal">
+                                                        <div class="modal-content">
+                                                            <span class="closee3{{ archivo.id }} close" style="margin-top: -10px;">&times;</span>
+                                                            <div class="modal-header">
+                                                                <h2>Modificar Usuario</h2>
+                                                            </div>
+                                                            <br>
+                                                            <form method="POST" action="update/{{ archivo.pk }}">
+                                                                {% csrf_token %}
+                                                                <div class="form-group">
+                                                                    <div class="form-items">
+                                                                        <label class="modal-titulos">Cédula</label>
+                                                                        <br>
+                                                                        <input required type="text" class="form-control" readonly name="{{form2.username.html_name}}" placeholder="Ingrese el nombre de usuario" value="{{ archivo.username }}">
+                                                                    </div>
+                                                                    <div class="form-items">
+                                                                        <label class="modal-titulos">Nombre</label>
+                                                                        <br>
+                                                                        <input required type="text" class="form-control" name="{{form2.first_name.html_name}}" placeholder="Ingrese el nombre" value="{{ archivo.first_name }}">
+                                                                    </div>
+                                                                    <div class="form-items">
+                                                                        <label class="modal-titulos">Apellido</label>
+                                                                        <br>
+                                                                        <input required type="text" class="form-control" name="{{form2.last_name.html_name}}" placeholder="Ingrese el apellido" value="{{ archivo.last_name }}">
+                                                                    </div>
+                                                                    <div class="form-items">
+                                                                        <label class="modal-titulos">Teléfono</label>
+                                                                        <br>
+                                                                        <input required type="text" class="form-control" name="{{form2.telefono.html_name}}" placeholder="Ingrese el teléfono" value="{{ archivo.telefono }}">
+                                                                    </div>
+                                                                    <div class="form-items">
+                                                                        <label class="modal-titulos">Correo</label>
+                                                                        <br>
+                                                                        <input required type="text" class="form-control" name="{{form2.email.html_name}}" placeholder="Ingrese el correo" value="{{ archivo.email }}">
+                                                                    </div>
+                                                                    <div class="form-items">
+                                                                        <label>Comunidad</label>
+                                                                        <br>
+                                                                        <select required name="{{form2.comunidad.html_name}}" class="form-control">
+                                                                            <option value="{{ archivo.comunidad }}">{{ archivo.comunidad }}</option>
+                                                                            <option value="" disabled> =============================</option>
+                                                                            {% for comunidad in comunidades %}
+                                                                                <option value="{{ comunidad.comunidad }}">{{ comunidad.comunidad }}</option>
+                                                                            {% endfor %}
+                                                                        </select>
+                                                                    </div>
+                                                                    {% if archivo.pk != 1 %}
+                                                                        <div class="form-items">
+                                                                            <label class="modal-titulos">Tipo de Usuario</label>
+                                                                            <br>
+                                                                            <select required name="tipo" class="form-control">
+                                                                                {% for group in archivo.groups.all %}
+                                                                                    <option value="{{ group.name }}">{{ group.name }}</option>
+                                                                                {% endfor %}
+                                                                                <option value="" disabled> =============================</option>
+                                                                                {% for grupo in grupos %}
+                                                                                    <option value="{{ grupo.name }}">{{ grupo.name }}</option>
+                                                                                {% endfor %}
+                                                                            </select>
+                                                                        </div>
+                                                                    {% endif %}
+                                                                </div>
+                                                                <br>
+                                                                <div align="center">
+                                                                    <input type="submit" class="bnt" value="Enviar" style="width: 90px;">
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                    <script>
+                                                        var modall3{{ archivo.id }} = document.getElementById("myModall3{{ archivo.id }}");
+                                                        var btnn3{{ archivo.id }} = document.getElementById("myBtnn3{{ archivo.id }}");
+                                                        var spann3{{ archivo.id }} = document.getElementsByClassName("closee3{{ archivo.id }}")[0];
+                                                        btnn3{{ archivo.id }}.onclick = function() {
+                                                            modall3{{ archivo.id }}.style.visibility = "visible";
+                                                            modall3{{ archivo.id }}.style.opacity = 1;
+                                                        }
+                                                    
+                                                        spann3{{ archivo.id }}.onclick = function() {
+                                                            modall3{{ archivo.id }}.style.visibility = "hidden";
+                                                            modall3{{ archivo.id }}.style.opacity = 0;
+                                                        }
+                                                    
+                                                        window.onclick = function(event) {
+                                                            if (event.target == modall3{{ archivo.id }}) {
+                                                                modall3{{ archivo.id }}.style.visibility = "hidden";
+                                                                modall3{{ archivo.id }}.style.opacity = 0;
+                                                            }
+                                                        }
+                                                    </script>
+                                                {% endif %}
+                                                <!-- ===================== Editar Contraseña de Usuarios ====================  -->
+                                                <a href="#!" id="myBtnn4{{ archivo.id }}" style="color: black;" title="Contraseña"><i class="fa-solid fa-lock"></i></a>
+                                                <div id="myModall4{{ archivo.id }}" class="modal">
+                                                    <div class="modal-content">
+                                                        <span class="closee4{{ archivo.id }} close" style="margin-top: -10px;">&times;</span>
+                                                        <div class="modal-header">
+                                                            <h2>Modificar Contraseña</h2>
+                                                        </div>
+                                                        <br>
+                                                        <form method="POST" action="updatep/{{ archivo.pk }}">
+                                                            {% csrf_token %}
+                                                            <div class="form-group">
+                                                                <div class="form-items">
+                                                                    <label>Contraseña</label>
+                                                                    <br>
+                                                                    <input required type="password" class="form-control" name="{{form3.password.html_name}}" placeholder="Ingrese la contraseña">
+                                                                    <p style="font-size: 10px; text-align: justify; color: #7a1f24;">Debe contener longitud mínima de 8 carácteres, mayusculas, minúsculas, números y carácteres especiales.</p>
+                                                                </div>
+                                                                <div class="form-items">
+                                                                    <label>Confirmar Contraseña</label>
+                                                                    <br>
+                                                                    <input required type="password" class="form-control" name="{{form3.password_confirm.html_name}}" placeholder="Confirmar contraseña">
+                                                                    <p style="font-size: 10px; text-align: justify; color: #7a1f24;">Ambas contraseñas debe coincidir.</p>
+                                                                </div>
+                                                            </div>
+                                                            <br>
+                                                            <div align="center">
+                                                                <input type="submit" class="bnt" value="Enviar" style="width: 90px;">
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                                <script>
+                                                    var modall4{{ archivo.id }} = document.getElementById("myModall4{{ archivo.id }}");
+                                                    var btnn4{{ archivo.id }} = document.getElementById("myBtnn4{{ archivo.id }}");
+                                                    var spann4{{ archivo.id }} = document.getElementsByClassName("closee4{{ archivo.id }}")[0];
+                                                    btnn4{{ archivo.id }}.onclick = function() {
+                                                        modall4{{ archivo.id }}.style.visibility = "visible";
+                                                        modall4{{ archivo.id }}.style.opacity = 1;
+                                                    }
+                                                
+                                                    spann4{{ archivo.id }}.onclick = function() {
+                                                        modall4{{ archivo.id }}.style.visibility = "hidden";
+                                                        modall4{{ archivo.id }}.style.opacity = 0;
+                                                    }
+                                                
+                                                    window.onclick = function(event) {
+                                                        if (event.target == modall4{{ archivo.id }}) {
+                                                            modall4{{ archivo.id }}.style.visibility = "hidden";
+                                                            modall4{{ archivo.id }}.style.opacity = 0;
+                                                        }
+                                                    }
+                                                </script>
+                                                <!-- ===================== Editar Foto de Usuario ====================  -->
+                                                <a href="#!" id="myBtnn2{{ archivo.id }}" style="color: black;" title="Cambiar imagen"><i class="fa-solid fa-image"></i></a>
+                                                <div id="myModall2{{ archivo.id }}" class="modal">
+                                                    <div class="modal-content">
+                                                        <span class="closee2{{ archivo.id }} close" style="margin-top: -10px;">&times;</span>
+                                                        <div class="modal-header">
+                                                            <h2 style="text-align: center;">Modificar Imagen</h2>
+                                                        </div>
+                                                        <br>
+                                                        <form method="POST" action="updatei/{{ archivo.pk }}" enctype="multipart/form-data">
+                                                            {% csrf_token %}
+                                                            <div class="form-group">
+                                                                <div class="form-items">
+                                                                    <div id="file-uploadd{{ archivo.pk }}" class="file-upload">
+                                                                        <input type="file" name="{{ form4.foto.html_name }}" id="fileInputd{{ archivo.pk }}" accept="image/*">
+                                                                        <div id="fileDisplayd{{ archivo.pk }}" class="file-display">
+                                                                        <i id="fileIcond{{ archivo.pk }}" class="fa-solid fa-image" style="display: none;"></i>
+                                                                        <span id="fileNamed{{ archivo.pk }}" style="display: none;">Nombre del archivo</span>
+                                                                        </div>
+                                                                        <p style="margin-top: 3px;" id="uploadMessaged{{ archivo.pk }}">Arrastra y suelta, haz clic o pega un archivo aquí</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <br>
+                                                            <div align="center">
+                                                                <input type="submit" class="bnt" value="Enviar" style="width: 90px;">
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                                <script>
+                                                    var modall2{{ archivo.id }} = document.getElementById("myModall2{{ archivo.id }}");
+                                                    var btnn2{{ archivo.id }} = document.getElementById("myBtnn2{{ archivo.id }}");
+                                                    var spann2{{ archivo.id }} = document.getElementsByClassName("closee2{{ archivo.id }}")[0];
+                                                    btnn2{{ archivo.id }}.onclick = function() {
+                                                        modall2{{ archivo.id }}.style.visibility = "visible";
+                                                        modall2{{ archivo.id }}.style.opacity = 1;
+                                                    }
+
+                                                    spann2{{ archivo.id }}.onclick = function() {
+                                                        modall2{{ archivo.id }}.style.visibility = "hidden";
+                                                        modall2{{ archivo.id }}.style.opacity = 0;
+                                                    }
+
+                                                    window.onclick = function(event) {
+                                                        if (event.target == modall2{{ archivo.id }}) {
+                                                            modall2{{ archivo.id }}.style.visibility = "hidden";
+                                                            modall2{{ archivo.id }}.style.opacity = 0;
+                                                        }
+                                                    }
+                                                </script>
+                                                <script>
+                                                    (function () {
+                                                        const fileUploadd{{ archivo.pk }} = document.getElementById('file-uploadd{{ archivo.pk }}');
+                                                        const fileInputd{{ archivo.pk }} = document.getElementById('fileInputd{{ archivo.pk }}');
+                                                        const fileDisplayd{{ archivo.pk }} = document.getElementById('fileDisplayd{{ archivo.pk }}');
+                                                        const fileIcond{{ archivo.pk }} = document.getElementById('fileIcond{{ archivo.pk }}');
+                                                        const fileNamed{{ archivo.pk }} = document.getElementById('fileNamed{{ archivo.pk }}');
+                                                        const uploadMessaged{{ archivo.pk }} = document.getElementById('uploadMessaged{{ archivo.pk }}');
+
+                                                        function handleFile(file) {
+                                                            fileNamed{{ archivo.pk }}.textContent = file.name;
+                                                            fileNamed{{ archivo.pk }}.style.display = 'inline';
+                                                            fileIcond{{ archivo.pk }}.src = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                                                            fileIcond{{ archivo.pk }}.style.display = 'inline';
+                                                            uploadMessaged{{ archivo.pk }}.style.display = 'none';
+                                                        }
+
+                                                        fileUploadd{{ archivo.pk }}.addEventListener('click', () => {
+                                                            fileInputd{{ archivo.pk }}.click();
+                                                        });
+
+                                                        fileUploadd{{ archivo.pk }}.addEventListener('dragover', (event) => {
+                                                            event.preventDefault();
+                                                            fileUploadd{{ archivo.pk }}.style.backgroundColor = '#e0e0e0';
+                                                        });
+
+                                                        fileUploadd{{ archivo.pk }}.addEventListener('dragleave', () => {
+                                                            fileUploadd{{ archivo.pk }}.style.backgroundColor = '';
+                                                        });
+
+                                                        fileUploadd{{ archivo.pk }}.addEventListener('drop', (event) => {
+                                                            event.preventDefault();
+                                                            fileUploadd{{ archivo.pk }}.style.backgroundColor = '';
+                                                            const filed{{ archivo.pk }} = event.dataTransfer.files[0];
+                                                            if (filed{{ archivo.pk }}) {
+                                                                handleFile(filed{{ archivo.pk }});
+                                                            }
+                                                        });
+
+                                                        fileInputd{{ archivo.pk }}.addEventListener('change', (event) => {
+                                                            const filed{{ archivo.pk }} = event.target.files[0];
+                                                            if (filed{{ archivo.pk }}) {
+                                                                handleFile(filed{{ archivo.pk }});
+                                                            }
+                                                        });
+
+                                                        document.addEventListener('paste', (event) => {
+                                                            const itemsd{{ archivo.pk }} = event.clipboardData.items;
+                                                            for (let i = 0; i < itemsd{{ archivo.pk }}.length; i++) {
+                                                                if (itemsd{{ archivo.pk }}[i].kind === 'file') {
+                                                                    const filed{{ archivo.pk }} = itemsd{{ archivo.pk }}[i].getAsFile();
+                                                                    if (filed{{ archivo.pk }}) {
+                                                                        handleFile(filed{{ archivo.pk }});
+                                                                    }
+                                                                }
+                                                            }
+                                                        });
+                                                    })();
+                                                </script>
+                                                <!-- ===================== Eliminar Usuario (No se puede eliminar el Admin) ====================  -->
+                                                {% if archivo.pk != 1 %}
+                                                    <a href="#!" id="myBtnn7{{ archivo.id }}" style="color: black;" title="Eliminar"><i class="fa-solid fa-trash"></i></a>
+                                                    <div id="myModall7{{ archivo.id }}" class="modal">
+                                                        <div class="modal-content">
+                                                            <span class="closee7{{ archivo.id }} close" style="margin-top: -10px;">&times;</span>
+                                                            <div class="modal-header">
+                                                                <form action="delete/{{ archivo.pk }}" method="POST">
+                                                                    {% csrf_token %}
+                                                                    <br>
+                                                                    <div align="center">
+                                                                        <h2>¿Estás seguro de eliminar este registro?</h2>
+                                                                    </div>
+                                                                    <br><br>
+                                                                    <div align="center">
+                                                                        <input type="submit" class="bnt" value="Eliminar" style="width: 90px;">
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <script>
+                                                        var modall7{{ archivo.id }} = document.getElementById("myModall7{{ archivo.id }}");
+                                                        var btnn7{{ archivo.id }} = document.getElementById("myBtnn7{{ archivo.id }}");
+                                                        var spann7{{ archivo.id }} = document.getElementsByClassName("closee7{{ archivo.id }}")[0];
+                                                        btnn7{{ archivo.id }}.onclick = function() {
+                                                            modall7{{ archivo.id }}.style.visibility = "visible";
+                                                            modall7{{ archivo.id }}.style.opacity = 1;
+                                                        }
+
+                                                        spann7{{ archivo.id }}.onclick = function() {
+                                                            modall7{{ archivo.id }}.style.visibility = "hidden";
+                                                            modall7{{ archivo.id }}.style.opacity = 0;
+                                                        }
+
+                                                        window.onclick = function(event) {
+                                                            if (event.target == modall7{{ archivo.id }}) {
+                                                                modall7{{ archivo.id }}.style.visibility = "hidden";
+                                                                modall7{{ archivo.id }}.style.opacity = 0;
+                                                            }
+                                                        }
+                                                    </script>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========== Script de Agregar Usuario =========  -->
+        <script>
+            var modal = document.getElementById("myModal");
+            var btn = document.getElementById("myBtn");
+            var span = document.getElementsByClassName("close")[0];
+            btn.onclick = function() {
+                modal.style.visibility = "visible";
+                modal.style.opacity = 1;
+            }
+
+            span.onclick = function() {
+                modal.style.visibility = "hidden";
+                modal.style.opacity = 0;
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.visibility = "hidden";
+                    modal.style.opacity = 0;
+                }
+            }
+        </script>
+        <!-- =========== Script de Agregar Foto de Usuario =========  -->
+        <script>
+            (function () {
+                const fileUpload = document.getElementById('file-upload');
+                const fileInput = document.getElementById('fileInput');
+                const fileDisplay = document.getElementById('fileDisplay');
+                const fileIcon = document.getElementById('fileIcon');
+                const fileName = document.getElementById('fileName');
+                const uploadMessage = document.getElementById('uploadMessage');
+
+                function handleFile(file) {
+                fileName.textContent = file.name;
+                fileName.style.display = 'inline';
+                fileIcon.src = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                fileIcon.style.display = 'inline';
+                uploadMessage.style.display = 'none';
+                }
+
+                fileUpload.addEventListener('click', () => {
+                fileInput.click();
+                });
+
+                fileUpload.addEventListener('dragover', (event) => {
+                event.preventDefault();
+                fileUpload.style.backgroundColor = '#e0e0e0';
+                });
+
+                fileUpload.addEventListener('dragleave', () => {
+                fileUpload.style.backgroundColor = '';
+                });
+
+                fileUpload.addEventListener('drop', (event) => {
+                event.preventDefault();
+                fileUpload.style.backgroundColor = '';
+                const file = event.dataTransfer.files[0];
+                if (file) {
+                    handleFile(file);
+                }
+                });
+
+                fileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    handleFile(file);
+                }
+                });
+
+                document.addEventListener('paste', (event) => {
+                const items = event.clipboardData.items;
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].kind === 'file') {
+                        const file = items[i].getAsFile();
+                        if (file) {
+                            handleFile(file);
+                        }
+                    }
+                }
+                });
+            })();
+        </script>
+        <script>
+            const botonMover = document.getElementById('sidebuton');
+            const cajaAMover = document.getElementById('sidebar');
+
+            let estaAbierto = false;
+
+            const posicionCerradoCaja = -110;
+            const posicionAbiertoCaja = 0;
+
+            const posicionCerradoBoton = 0;
+            const posicionAbiertoBoton = 300;
+
+            cajaAMover.style.left = `${posicionCerradoCaja}px`;
+            botonMover.style.left = `${posicionCerradoBoton}px`;
+
+            botonMover.addEventListener('click', () => {
+                if (!estaAbierto) {
+                    cajaAMover.style.left = `${posicionAbiertoCaja}px`;
+                    cajaAMover.style.width = `300px`;
+                    botonMover.style.left = `${posicionAbiertoBoton}px`;
+                    botonMover.style.transform = `rotate(90deg)`;
+                    estaAbierto = true;
+                } else {
+                    cajaAMover.style.left = `${posicionCerradoCaja}px`;
+                    cajaAMover.style.width = `110px`;
+                    botonMover.style.left = `${posicionCerradoBoton}px`;
+                    botonMover.style.transform = `rotate(270deg)`;
+                    estaAbierto = false;
+                }
+            });
+        </script>
+    </body>
+</html>
+{% endblock %}

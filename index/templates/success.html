@@ -1,0 +1,476 @@
+{% block success %}
+{% endblock %}
+<!---- =============== Modal Registro Exitoso  ================ -->
+<div class="modal fade" id="contactmodaladd" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body" align="center">
+                <div class="modalexcla2"><p class="modalbut2">✔</p></div>
+                <h2 class="modaltext">Registro cambiado exitosamente.</h2>
+                <br>
+                <button type="button" class="bnt" id="closeModal2" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!---- =============== Modal de Error de Registro  ================ -->
+<div class="modal fade" id="editcontactm" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body" align="center">
+                <div class="modalexcla2"><p class="modalbut2" style="margin-top: -5px;">X</p></div>
+                <h2 class="modaltext">Error de registro.</h2>
+                <br>
+                <button type="button" class="bnt" id="closeModal1" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!---- =============== Modal de Usuario Existente  ================ -->
+<div class="modal fade" id="errorexistm" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body" align="center">
+                <div class="modalexcla2"><p class="modalbut2">X</p></div>
+                <h2 class="modaltext">Usuario Existente.</h2>
+                <br>
+                <button type="button" class="bnt" id="closeModalee" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!---- =============== Modal de Password no coincide  ================ -->
+<div class="modal fade" id="pcm" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body" align="center">
+                <div class="modalexcla2"><p class="modalbut2">X</p></div>
+                <h2 class="modaltext">Fallo en la contraseña.</h2>
+                <br>
+                <button type="button" class="bnt" id="closeModalpc" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!---- =============== Modal de Solicitud de Contacto Enviada  ================ -->
+<div class="modal fade" id="sentm" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body" align="center">
+                <div class="modalexcla2"><p class="modalbut2">✔</p></div>
+                <h2 class="modaltext">Solicitud enviada.</h2>
+                <br>
+                <button type="button" class="bnt" id="closeModalsent" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!---- =============== Modal de Solicitud de Usuario no existente  ================ -->
+<div class="modal fade" id="noexist" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body" align="center">
+                <div class="modalexcla2"><p class="modalbut2">X</p></div>
+                <h2 class="modaltext">Usuario no existente.</h2>
+                <br>
+                <button type="button" class="bnt" id="closeModalnoexist" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!---- =============== Modal de Agregarte tu mismo  ================ -->
+<div class="modal fade" id="self" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body" align="center">
+                <div class="modalexcla2"><p class="modalbut2">X</p></div>
+                <h2 class="modaltext">No puedes agregarte a ti mismo como contacto.</h2>
+                <br>
+                <button type="button" class="bnt" id="closeModalself" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!---- =============== Modal de Agregarte contacto ya agregado  ================ -->
+<div class="modal fade" id="already" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body" align="center">
+                <div class="modalexcla2"><p class="modalbut2">X</p></div>
+                <h2 class="modaltext">Este usuario ya es uno de tus contactos.</h2>
+                <br>
+                <button type="button" class="bnt" id="closeModalalready" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!---- =============== Modal de Agregarte usuario ya te envió solicitud  ================ -->
+<div class="modal fade" id="pendent_request" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body" align="center">
+                <div class="modalexcla2"><p class="modalbut2">X</p></div>
+                <h2 class="modaltext">Este usuario ya te envió una solicitud.</h2>
+                <br>
+                <button type="button" class="bnt" id="closeModalpendent_request" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!---- =============== Modal de Solicitud Aceptada  ================ -->
+<div class="modal fade" id="aceptedm" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body" align="center">
+                <div class="modalexcla2"><p class="modalbut2">✔</p></div>
+                <h2 class="modaltext">Solicitud Aceptada.</h2>
+                <br>
+                <button type="button" class="bnt" id="closeModalacepted" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!---- =============== Modal de Solicitud Rechazada  ================ -->
+<div class="modal fade" id="rejected" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body" align="center">
+                <div class="modalexcla2"><p class="modalbut2">✔</p></div>
+                <h2 class="modaltext">Solicitud Rechazada.</h2>
+                <br>
+                <button type="button" class="bnt" id="closeModalrejected" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!---- =============== Modal de Solicitud Eliminada  ================ -->
+<div class="modal fade" id="requestdelete" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body" align="center">
+                <div class="modalexcla2"><p class="modalbut2">✔</p></div>
+                <h2 class="modaltext">Solicitud Eliminada.</h2>
+                <br>
+                <button type="button" class="bnt" id="closeModalrequestdelete" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    // =============== Script de Modal de Registro Exitoso ================ //
+    var modaltaes = document.getElementById("contactmodaladd");
+    var urla = window.location.href;
+    var closeModala = document.getElementById("closeModal2");
+
+    function mostraradd() {
+        if (urla.includes("#success")) {
+            modaltaes.style.visibility = "visible";
+            modaltaes.style.opacity = 1;
+        }
+    }
+
+    window.onload=function(){
+        mostraradd();
+        mostrarModalSegunURL();
+        mostrarModalTercerURL();
+        mostrarModalCuartaURL();
+        mostrarModalQuintaURL();
+        mostrarModalSextoURL();
+        mostrarModalSeptimoURL();
+        mostrarModalOctavoURL();
+        mostrarModalOctavoURL();
+        mostrarModalNovenaURL();
+        mostrarModalDecimaURL();
+        mostrarModalOnceavaURL();
+        mostrarModalDoceabaURL();
+    }
+
+    closeModala.onclick = function() {
+        modaltaes.style.visibility = "hidden";
+        modaltaes.style.opacity = 0;
+    };
+
+    window.onclick = function(event) {
+        if (event.target == modaltaes) {
+            modaltaes.style.visibility = "hidden";
+            modaltaes.style.opacity = 0;
+        }
+    }
+
+    // =============== Script de Modal de Error de Registro ================ //
+    var modalttes = document.getElementById("editcontactm");
+    var url = window.location.href;
+    var closeModal1 = document.getElementById("closeModal1");
+
+    function mostrarModalSegunURL() {
+        if (url.includes("#error")) {
+            modalttes.style.visibility = "visible";
+            modalttes.style.opacity = 1;
+        }
+    }
+ 
+    closeModal1.onclick = function() {
+        modalttes.style.visibility = "hidden";
+        modalttes.style.opacity = 0;
+    };
+
+    window.onclick = function(event) {
+        if (event.target == modalttes) {
+            modalttes.style.visibility = "hidden";
+            modalttes.style.opacity = 0;
+        }
+    }
+
+    // =============== Script de Modal de Usuario Existente ================ //
+    var modalee = document.getElementById("errorexistm");
+    var urle = window.location.href;
+    var closeModalee = document.getElementById("closeModalee");
+
+    function mostrarModalTercerURL() {
+        if (urle.includes("#failusername")) {
+            modalee.style.visibility = "visible";
+            modalee.style.opacity = 1;
+        }
+    }
+ 
+    closeModalee.onclick = function() {
+        modalee.style.visibility = "hidden";
+        modalee.style.opacity = 0;
+    };
+
+    window.onclick = function(event) {
+        if (event.target == modalee) {
+            modalee.style.visibility = "hidden";
+            modalee.style.opacity = 0;
+        }
+    }
+
+    // =============== Script de Modal de Password no coincide ================ //
+    var modalpc = document.getElementById("pcm");
+    var urlpc = window.location.href;
+    var closeModalpc = document.getElementById("closeModalpc");
+
+    function mostrarModalCuartaURL() {
+        if (urlpc.includes("#passworderror")) {
+            modalpc.style.visibility = "visible";
+            modalpc.style.opacity = 1;
+        }
+    }
+ 
+    closeModalpc.onclick = function() {
+        modalpc.style.visibility = "hidden";
+        modalpc.style.opacity = 0;
+    };
+
+    window.onclick = function(event) {
+        if (event.target == modalpc) {
+            modalpc.style.visibility = "hidden";
+            modalpc.style.opacity = 0;
+        }
+    }
+
+    // =============== Script de Modal de Solicitud de Contacto Enviada ================ //
+    var modalsent = document.getElementById("sentm");
+    var urlsent = window.location.href;
+    var closeModalsent = document.getElementById("closeModalsent");
+
+    function mostrarModalQuintaURL() {
+        if (urlsent.includes("#sent")) {
+            modalsent.style.visibility = "visible";
+            modalsent.style.opacity = 1;
+        }
+    }
+ 
+    closeModalsent.onclick = function() {
+        modalsent.style.visibility = "hidden";
+        modalsent.style.opacity = 0;
+    };
+
+    window.onclick = function(event) {
+        if (event.target == modalsent) {
+            modalsent.style.visibility = "hidden";
+            modalsent.style.opacity = 0;
+        }
+    }
+
+    // =============== Script de Modal de Usuario no existe ================ //
+    var modalnoexit = document.getElementById("noexist");
+    var urlnoexit = window.location.href;
+    var closeModalnoexist = document.getElementById("closeModalnoexist");
+
+    function mostrarModalSextoURL() {
+        if (urlnoexit.includes("#invalid")) {
+            modalnoexit.style.visibility = "visible";
+            modalnoexit.style.opacity = 1;
+        }
+    }
+ 
+    closeModalnoexist.onclick = function() {
+        modalnoexit.style.visibility = "hidden";
+        modalnoexit.style.opacity = 0;
+    };
+
+    window.onclick = function(event) {
+        if (event.target == modalnoexit) {
+            modalnoexit.style.visibility = "hidden";
+            modalnoexit.style.opacity = 0;
+        }
+    }
+
+    // =============== Script de Modal de Usuario propio ================ //
+    var modalself = document.getElementById("self");
+    var urlself = window.location.href;
+    var closeModalself = document.getElementById("closeModalself");
+
+    function mostrarModalSeptimoURL() {
+        if (urlself.includes("#self")) {
+            modalself.style.visibility = "visible";
+            modalself.style.opacity = 1;
+        }
+    }
+ 
+    closeModalself.onclick = function() {
+        modalself.style.visibility = "hidden";
+        modalself.style.opacity = 0;
+    };
+
+    window.onclick = function(event) {
+        if (event.target == modalself) {
+            modalself.style.visibility = "hidden";
+            modalself.style.opacity = 0;
+        }
+    }
+
+    // =============== Script de Modal de Contacto ya registrado ================ //
+    var modalalready = document.getElementById("already");
+    var urlalready = window.location.href;
+    var closeModalalready = document.getElementById("closeModalalready");
+
+    function mostrarModalOctavoURL() {
+        if (urlalready.includes("#already")) {
+            modalalready.style.visibility = "visible";
+            modalalready.style.opacity = 1;
+        }
+    }
+ 
+    closeModalalready.onclick = function() {
+        modalalready.style.visibility = "hidden";
+        modalalready.style.opacity = 0;
+    };
+
+    window.onclick = function(event) {
+        if (event.target == modalalready) {
+            modalalready.style.visibility = "hidden";
+            modalalready.style.opacity = 0;
+        }
+    }
+
+    // =============== Script de Modal de Usuario ya te envió una solicitud ================ //
+    var modalpendent_request = document.getElementById("pendent_request");
+    var urlmodalpendent_request = window.location.href;
+    var closeModalmodalpendent_request = document.getElementById("closeModalmodalpendent_request");
+
+    function mostrarModalNovenaURL() {
+        if (urlmodalpendent_request.includes("#pendent_request")) {
+            modalpendent_request.style.visibility = "visible";
+            modalpendent_request.style.opacity = 1;
+        }
+    }
+ 
+    closeModalmodalpendent_request.onclick = function() {
+        modalpendent_request.style.visibility = "hidden";
+        modalpendent_request.style.opacity = 0;
+    };
+
+    window.onclick = function(event) {
+        if (event.target == modalpendent_request) {
+            modalpendent_request.style.visibility = "hidden";
+            modalpendent_request.style.opacity = 0;
+        }
+    }
+
+    // =============== Script de Modal de Solicitud Acpetada ================ //
+    var modalacepted = document.getElementById("aceptedm");
+    var urlacepted = window.location.href;
+    var closeModalacepted = document.getElementById("closeModalacepted");
+
+    function mostrarModalDecimaURL() {
+        if (urlacepted.includes("#acepted")) {
+            modalacepted.style.visibility = "visible";
+            modalacepted.style.opacity = 1;
+        }
+    }
+ 
+    closeModalacepted.onclick = function() {
+        modalacepted.style.visibility = "hidden";
+        modalacepted.style.opacity = 0;
+    };
+
+    window.onclick = function(event) {
+        if (event.target == modalacepted) {
+            modalacepted.style.visibility = "hidden";
+            modalacepted.style.opacity = 0;
+        }
+    }
+
+    // =============== Script de Modal de Solicitud Rechazada ================ //
+    var modalrejected = document.getElementById("rejected");
+    var urlrejected = window.location.href;
+    var closeModalrejected = document.getElementById("closeModalrejected");
+
+    function mostrarModalOnceavaURL() {
+        if (urlrejected.includes("#rejected")) {
+            modalrejected.style.visibility = "visible";
+            modalrejected.style.opacity = 1;
+        }
+    }
+ 
+    closeModalrejected.onclick = function() {
+        modalrejected.style.visibility = "hidden";
+        modalrejected.style.opacity = 0;
+    };
+
+    window.onclick = function(event) {
+        if (event.target == modalrejected) {
+            modalrejected.style.visibility = "hidden";
+            modalrejected.style.opacity = 0;
+        }
+    }
+
+    // =============== Script de Modal de Solicitud Eliminada ================ //
+    var modalrequestdelete = document.getElementById("requestdelete");
+    var urlrequestdelete = window.location.href;
+    var closeModalrequestdelete = document.getElementById("closeModalrequestdelete");
+
+    function mostrarModalDoceabaURL() {
+        if (urlrequestdelete.includes("#requestdelete")) {
+            modalrequestdelete.style.visibility = "visible";
+            modalrequestdelete.style.opacity = 1;
+        }
+    }
+ 
+    closeModalrequestdelete.onclick = function() {
+        modalrequestdelete.style.visibility = "hidden";
+        modalrequestdelete.style.opacity = 0;
+    };
+
+    window.onclick = function(event) {
+        if (event.target == modalrequestdelete) {
+            modalrequestdelete.style.visibility = "hidden";
+            modalrequestdelete.style.opacity = 0;
+        }
+    }
+    
+</script>

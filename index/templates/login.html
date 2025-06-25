@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+    <!-- ======================= Cabecera ================== -->
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>RAIZCOM</title>
+        <link rel="manifest" href="{% static 'manifest.json' %}">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon" href="{% static '/img/icon-192x192.png' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+        <link rel="icon" type="image/x-icon" href="{% static '/img/LOGO_ICON.png' %}">
+    </head>
+    <!-- ======================= LOGIN ================== -->
+    <body>
+        <div class="caja">
+            <div class="decorative-side">
+                <span class="bg-animate"></span>
+                <img class="logo" src="{% static 'img/LOGO.png' %}" alt="Logo RAIZCOM">
+            </div>
+
+            <div class="form-caja login">
+                <h2>Inicio de Sesión</h2>
+                <form action="#" method="POST">
+                    {% csrf_token %}
+                    <div class="input-box">
+                        <input type="text" name="username" required>
+                        <label>Cédula:</label>
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div class="input-box">
+                        <input type="password" name="password" required>
+                        <label>Contraseña:</label>
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <button class="boton" type="submit">INGRESAR</button>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

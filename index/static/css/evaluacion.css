@@ -1,0 +1,107 @@
+@page {
+    size: A4;
+    margin: 0;
+    padding-top: 130px;
+    padding-bottom: 115px;
+
+    @bottom-center {
+        content: counter(page);
+        font-size: 9px;
+        color: #000000;
+        margin-top: -191px;
+        margin-left: 370px;
+        font-family: Liberation Sans;
+    }
+}
+
+@font-face {
+    font-family: 'Liberation Sans';
+    src: url('/home/vencert/agenda/vencert/app/static/fonts/LiberationSans-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Liberation Bold';
+    src: url('/home/vencert/agenda/vencert/app/static/fonts/LiberationSans-Bold.ttf') format('truetype');
+}
+
+body {
+    font-family: 'Liberation Sans', sans-serif;
+    background: url('/home/vencert/agenda/vencert/app/static/img/fondo_eval.png') no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+}
+
+.portada{
+    height: 1800px;
+    margin-top: 200px;
+    width: 794px;
+    z-index: -2;
+}
+
+.content {
+    margin-left: 70px;
+    margin-right: 70px;
+    z-index: 1;
+    page-break-before: avoid;
+    counter-increment: page;
+    align-content: justify;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid black; 
+    padding: 5px;
+    text-align: justify; 
+}
+
+p {
+    font-size: 13px;
+    text-align: justify;
+}
+
+.titulo{
+    font-family: 'Liberation Bold', sans-serif;
+    color: #0563C1;
+    font-size: 22px;
+    text-align: center;
+}
+
+.p-espaciado-pequeno {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+a{
+    color: #000080;
+}
+
+ul{
+    margin: 0;
+}
+
+ul li{
+    list-style-type: disc;
+    list-style-position: inside;
+    padding: 0 0 0 0;
+    margin-left: -20px;
+}
+
+.page-break {
+    page-break-after: always;
+}
+
+.cajafoot{
+    width: 79%;
+    left: 0;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    margin-bottom: -40px;
+    text-align: center;
+    margin-left: 80px;
+}

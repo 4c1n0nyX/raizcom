@@ -1,0 +1,344 @@
+{% extends 'success.html' %}
+{% block success %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <!-- =============== Cabecera ================ -->  
+    <head>
+		<meta charset="UTF-8">
+ 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  		<title>RAIZCOM | Recursos</title>
+        <link rel="manifest" href="{% static 'manifest.json' %}">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon" href="{% static '/img/icon-192x192.png' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+        <link rel="icon" type="image/x-icon" href="{% static '/img/LOGO_ICON.png' %}">
+	</head>
+    <body>
+        <!-- =============== Ménu principal ================ -->
+        <div class="sidebuton" id="sidebuton">
+            <i class="fa-solid fa-circle-chevron-down"></i>
+        </div>
+        <div class="sidebar" id="sidebar">
+            <div class="logo"></div>
+            <ul class="menu">
+                <li class="active">
+                    <a href="#">
+                        <img style="width:35px; height: 35px;" src="{% static 'img/LOGO_ICON.png' %}">
+                        <span class="title" style="color: #ffffff;"><strong>RAIZCOM</strong></span>
+                    </a>
+                </li>
+                <li class="logout.new">
+                    <a href="../../">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Volver</span>
+                    </a>
+                </li>
+                <hr style="border: #b4baca solid 1px;">
+                <li>
+                    <a href="../noticias/">
+                        <i class="fa-solid fa-newspaper"></i>
+                        <span>Noticias</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../recursos/">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                        <span>Recursos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../pservicios/">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>Servicios</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- ========================= Menú de usuario ==================== -->
+        <div class="main--content">
+            <div class="header--wrapper">
+                <div class="header--title">
+                    <h2>RAIZCOM | Recursos</h2>
+                </div>
+                <div class="user--info">
+                    <a href="../../usuario/" class="user--link">
+                        <div class="box">
+                            {% if request.user.foto %}
+                                <img src="{{ request.user.foto.url }}">
+                            {% else %}
+                                <i class="fa-solid fa-circle-user"></i>
+                            {% endif %}
+                            <h3>{{request.user.first_name}} {{request.user.last_name}}</h3>
+                        </div>
+                    </a>
+                    |
+                    <li class="butun">
+                        <a href="{% url 'logout' %}" style="text-decoration: none;">
+                            <label class="switch">
+                                <i class="fa-solid fa-power-off" style="color: #030c1c;"></i>
+                            </label>
+                        </a>
+                    </li>
+                </div>
+            </div>
+            <!-- ======================= Agrear Servicio ======================  -->
+            <div class="tabular--wrapper">
+                <h3 class="main--title"></h3>
+                <div class="user--info">
+                    <button id="myBtn" class="bt">Agregar</button>
+                </div>
+            </div>
+            <!-- ======================= Formulario Agregar Servicio ======================  -->       
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" style="margin-top: -10px;">&times;</span>
+                    <div class="modal-header">
+                        <h2>Agregar Servicio</h2>
+                    </div>
+                    <br>
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="form-items">
+                                <label>Nombre del Sitio/Servicio</label>
+                                <br>
+                                <input required type="text" name="{{ form1.nombre.html_name }}" class="form-control">
+                            </div>
+                            <div class="form-items">
+                                <label>Tipo de Servicio</label>
+                                <br>
+                                <select required name="{{form1.servicio.html_name}}" class="form-control">
+                                    <option value="" disabled selected> Selección</option>
+                                    <option value="Bancos">Bancos</option>
+                                    <option value="Bibliotecas">Bibliotecas</option>
+                                    <option value="CDI">CDI</option>
+                                    <option value="Comercios">Comercios</option>
+                                    <option value="Edificios Habitacionales">Edificios Habitacionales</option>
+                                    <option value="Entes Goubernamentales">Entes Goubernamentales</option>
+                                    <option value="Farmacias">Farmacias</option>
+                                    <option value="Lugares Turísticos/Culturales">Lugares Turísticos/Culturales</option>
+                                    <option value="Módulos Policiales">Módulos Policiales</option>
+                                </select>
+                            </div>
+                            <div class="form-items">
+                                <label>Latitud</label>
+                                <br>
+                                <input required type="text" name="{{ form1.latitud.html_name }}" class="form-control">
+                            </div>
+                            <div class="form-items">
+                                <label>Longitud</label>
+                                <br>
+                                <input required type="text" name="{{ form1.longitud.html_name }}" class="form-control">
+                            </div>
+                        </div>
+                        <br>
+                        <div align="center">
+                            <input type="submit" class="bnt" value="Enviar" style="width: 90px;">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- ===================== TABLA PRINCIPAL ====================  -->
+            <div class="tabular--wrapper" style="margin-top: 10px; padding-top: 10px;">
+                <h3>Servicios</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nombre del Sitio/Servicio</th>
+                                <th>Servicio</th>
+                                <th>Latitud</th>
+                                <th>Longitud</th>
+                                <th>Acciones</th>
+                            </tr>
+                            <tbody>
+                                {% for archivo in servicios %}
+                                    <tr>
+                                        <td class="tdc">{{ archivo.nombre }}</td>
+                                        <td class="tdc">{{ archivo.servicio }}</td>
+                                        <td class="tdc">{{ archivo.latitud }}</td>
+                                        <td class="tdc">{{ archivo.longitud }}</td>
+                                        <td>
+                                            <div class="tdc1">
+                                                <!-- ===================== EDITAR SERVICIO ====================  -->
+                                                <a href="#" id="myBtnn3{{ archivo.id }}" style="color: black;" title="Modificar"><i class="fa-solid fa-pen-to-square"></i></a>
+                                                <div id="myModall3{{ archivo.id }}" class="modal">
+                                                    <div class="modal-content">
+                                                        <span class="closee3{{ archivo.id }} close" style="margin-top: -10px;">&times;</span>
+                                                        <div class="modal-header">
+                                                            <h2 style="text-align: center;">Modificar Servicio</h2>
+                                                        </div>
+                                                        <br>
+                                                        <form method="POST" action="update/{{ archivo.pk }}">
+                                                            {% csrf_token %}
+                                                            <div class="form-group">
+                                                                <div class="form-items">
+                                                                    <label>Nombre</label>
+                                                                    <br>
+                                                                    <input required type="text" name="{{ form2.nombre.html_name }}" class="form-control" value="{{ archivo.nombre }}">
+                                                                </div>
+                                                                <div class="form-items">
+                                                                    <label>Tipo de Servicio</label>
+                                                                    <br>
+                                                                    <select required name="{{form2.servicio.html_name}}" class="form-control">
+                                                                        <option value="{{ archivo.servicio }}" selected>{{ archivo.servicio }}</option>
+                                                                        <option value="" disabled> =============================</option>
+                                                                        <option value="Bibliotecas">Bibliotecas</option>
+                                                                        <option value="CDI">CDI</option>
+                                                                        <option value="Comercios">Comercios</option>
+                                                                        <option value="Edificios Habitacionales">Edificios Habitacionales</option>
+                                                                        <option value="Entes Goubernamentales">Entes Goubernamentales</option>
+                                                                        <option value="Farmacias">Farmacias</option>
+                                                                        <option value="Módulos Policiales">Módulos Policiales</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="form-items">
+                                                                    <label>Latitud</label>
+                                                                    <br>
+                                                                    <input required type="text" name="{{ form2.latitud.html_name }}" class="form-control" value="{{ archivo.latitud }}">
+                                                                </div>
+                                                                <div class="form-items">
+                                                                    <label>Longitud</label>
+                                                                    <br>
+                                                                    <input required type="text" name="{{ form2.longitud.html_name }}" class="form-control" value="{{ archivo.longitud }}">
+                                                                </div>
+                                                            </div>
+                                                            <br>
+                                                            <div align="center">
+                                                                <input type="submit" class="bnt" value="Enviar" style="width: 90px;">
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                                <script>
+                                                    var modall3{{ archivo.id }} = document.getElementById("myModall3{{ archivo.id }}");
+                                                    var btnn3{{ archivo.id }} = document.getElementById("myBtnn3{{ archivo.id }}");
+                                                    var spann3{{ archivo.id }} = document.getElementsByClassName("closee3{{ archivo.id }}")[0];
+                                                    btnn3{{ archivo.id }}.onclick = function() {
+                                                        modall3{{ archivo.id }}.style.visibility = "visible";
+                                                        modall3{{ archivo.id }}.style.opacity = 1;
+                                                    }
+                                                
+                                                    spann3{{ archivo.id }}.onclick = function() {
+                                                        modall3{{ archivo.id }}.style.visibility = "hidden";
+                                                        modall3{{ archivo.id }}.style.opacity = 0;
+                                                    }
+                                                
+                                                    window.onclick = function(event) {
+                                                        if (event.target == modall3{{ archivo.id }}) {
+                                                            modall3{{ archivo.id }}.style.visibility = "hidden";
+                                                            modall3{{ archivo.id }}.style.opacity = 0;
+                                                        }
+                                                    }
+                                                </script>
+                                                <!-- ===================== ELIMINAR RECURSO ====================  -->
+                                                <a href="#" id="myBtnn4{{ archivo.id }}" style="color: black;" title="Eliminar"><i class="fa-solid fa-trash"></i></a>
+                                                <div id="myModall4{{ archivo.id }}" class="modal">
+                                                    <div class="modal-content">
+                                                        <span class="closee4{{ archivo.id }} close" style="margin-top: -10px;">&times;</span>
+                                                        <div class="modal-header">
+                                                            <form action="delete/{{ archivo.pk }}" method="POST">
+                                                                {% csrf_token %}
+                                                                <br>
+                                                                <div align="center">
+                                                                    <h2>¿Estás seguro de eliminar este servicio?</h2>
+                                                                </div>
+                                                                <br><br>
+                                                                <div align="center">
+                                                                    <input type="submit" class="bnt" value="Continuar" style="width: 90px;">
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <script>
+                                                    var modall4{{ archivo.id }} = document.getElementById("myModall4{{ archivo.id }}");
+                                                    var btnn4{{ archivo.id }} = document.getElementById("myBtnn4{{ archivo.id }}");
+                                                    var spann4{{ archivo.id }} = document.getElementsByClassName("closee4{{ archivo.id }}")[0];
+                                                    btnn4{{ archivo.id }}.onclick = function() {
+                                                        modall4{{ archivo.id }}.style.visibility = "visible";
+                                                        modall4{{ archivo.id }}.style.opacity = 1;
+                                                    }
+                                                
+                                                    spann4{{ archivo.id }}.onclick = function() {
+                                                        modall4{{ archivo.id }}.style.visibility = "hidden";
+                                                        modall4{{ archivo.id }}.style.opacity = 0;
+                                                    }
+                                                
+                                                    window.onclick = function(event) {
+                                                        if (event.target == modall3{{ archivo.id }}) {
+                                                            modall4{{ archivo.id }}.style.visibility = "hidden";
+                                                            modall4{{ archivo.id }}.style.opacity = 0;
+                                                        }
+                                                    }
+                                                </script>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- =========== Script de Agregar Servicio =========  -->
+        <script>
+            var modal = document.getElementById("myModal");
+            var btn = document.getElementById("myBtn");
+            var span = document.getElementsByClassName("close")[0];
+            btn.onclick = function() {
+                modal.style.visibility = "visible";
+                modal.style.opacity = 1;
+            }
+
+            span.onclick = function() {
+                modal.style.visibility = "hidden";
+                modal.style.opacity = 0;
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.visibility = "hidden";
+                    modal.style.opacity = 0;
+                }
+            }
+        </script>
+        <script>
+            const botonMover = document.getElementById('sidebuton');
+            const cajaAMover = document.getElementById('sidebar');
+
+            let estaAbierto = false;
+
+            const posicionCerradoCaja = -110;
+            const posicionAbiertoCaja = 0;
+
+            const posicionCerradoBoton = 0;
+            const posicionAbiertoBoton = 300;
+
+            cajaAMover.style.left = `${posicionCerradoCaja}px`;
+            botonMover.style.left = `${posicionCerradoBoton}px`;
+
+            botonMover.addEventListener('click', () => {
+                if (!estaAbierto) {
+                    cajaAMover.style.left = `${posicionAbiertoCaja}px`;
+                    cajaAMover.style.width = `300px`;
+                    botonMover.style.left = `${posicionAbiertoBoton}px`;
+                    botonMover.style.transform = `rotate(90deg)`;
+                    estaAbierto = true;
+                } else {
+                    cajaAMover.style.left = `${posicionCerradoCaja}px`;
+                    cajaAMover.style.width = `110px`;
+                    botonMover.style.left = `${posicionCerradoBoton}px`;
+                    botonMover.style.transform = `rotate(270deg)`;
+                    estaAbierto = false;
+                }
+            });
+        </script>   
+    </body>
+</html>
+{% endblock %}

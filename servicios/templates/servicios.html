@@ -1,0 +1,371 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <!-- =============== Cabeceras ================ -->    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>RAIZCOM | Servicios</title>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+        <link rel="manifest" href="{% static 'manifest.json' %}">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon" href="{% static '/img/icon-192x192.png' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+        <link rel="icon" type="image/x-icon" href="{% static '/img/LOGO_ICON.png' %}">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+        <style>
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            .main--content {
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+                overflow: hidden;
+            }
+
+            .header--wrapper {
+                flex-shrink: 0;
+            }
+
+            .tabular--wrapper {
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+                margin-top: 10px; 
+                padding-top: 10px;
+            }
+
+            .table-container {
+                flex-grow: 1;
+                position: relative;
+                min-height: 400px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            #mapid { 
+                height: 80% !important;
+                width: 100%;
+                border-radius: 10px; 
+                overflow: hidden;
+                flex-grow: 1;
+            }
+
+            #mapid .leaflet-tile-pane img.leaflet-tile {
+                filter: grayscale(80%);
+            }
+
+            .custom-div-icon {
+                background-color: transparent; 
+                border: none;
+            }
+            
+            .controls-container {
+                margin-bottom: 10px;
+                padding: 10px;
+                background-color: #f9f9f9;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .controls-container label {
+                font-weight: bold;
+                color: #333;
+            }
+
+            .controls-container select {
+                padding: 8px 12px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                font-size: 1rem;
+                background-color: white;
+                cursor: pointer;
+                min-width: 180px;
+            }
+
+            .controls-container select:focus {
+                outline: none;
+                border-color: #007bff;
+                box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            }
+
+            #service-info-panel {
+                margin-top: 10px;
+                padding: 10px 15px;
+                background-color: #e0f7fa;
+                border: 1px solid #b2ebf2;
+                border-radius: 8px;
+                min-height: 50px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                font-family: Arial, sans-serif;
+                color: #00796b;
+                font-size: 0.95rem;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                white-space: pre-wrap;
+                padding: 10px;
+            }
+
+            #service-info-panel p {
+                margin: 2px 0;
+            }
+
+            #service-info-panel p strong {
+                color: #004d40;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- =============== Menú principal ================ -->
+        <div class="sidebuton" id="sidebuton">
+            <i class="fa-solid fa-circle-chevron-down"></i>
+        </div>
+        <div class="sidebar" id="sidebar">
+            <div class="logo"></div>
+            <ul class="menu">
+                <li class="active">
+                    <a href="#">
+                        <img style="width:35px; height: 35px;" src="{% static 'img/LOGO_ICON.png' %}">
+                        <span class="title" style="color: #ffffff;"><strong>RAIZCOM</strong></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../../">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Volver</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- ========================= Menú usuario ==================== -->
+        <div class="main--content">
+            <div class="header--wrapper">
+                <div class="header--title">
+                    <h2>RAIZCOM | Servicios</h2>
+                </div>
+                <div class="user--info">
+                    <a href="../usuario/" class="user--link">
+                        <div class="box">
+                            {% if request.user.foto %}
+                                <img src="{{ request.user.foto.url }}">
+                            {% else %}
+                                <i class="fa-solid fa-circle-user"></i>
+                            {% endif %}
+                            <h3>{{request.user.first_name}} {{request.user.last_name}}</h3>
+                        </div>
+                    </a>
+                    |
+                    <li class="butun">
+                        <a href="{% url 'logout' %}" style="text-decoration: none;">
+                            <label class="switch">
+                                <i class="fa-solid fa-power-off" style="color: #030c1c;"></i>
+                            </label>
+                        </a>
+                    </li>
+                </div>
+            </div>
+            <!-- ===================== Mapa de Servicios ====================  -->
+            <div class="tabular--wrapper" style="margin-top: 10px; padding-top: 10px;">
+                <div class="table-container">
+                    <h2>Ubicación Geográfica de Servicios</h2>
+                    <br>
+                    <div class="controls-container">
+                        <label for="service-filter">Filtrar por Servicio:</label>
+                        <select id="service-filter">
+                            <option value="Todos">Todos los Servicios</option>
+                        </select>
+                    </div>
+                    <div id="mapid"></div>
+                    <div id="service-info-panel">
+                        <p>Pasa el cursor sobre un marcador para ver sus detalles.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        {{ servicios_json|json_script:"servicios_data" }}
+        <script>
+            const serviciosDataElement = document.getElementById('servicios_data');
+            console.log('Raw servicios_data textContent:', serviciosDataElement ? serviciosDataElement.textContent : 'Elemento servicios_data no encontrado');
+            const allServicios = serviciosDataElement ? JSON.parse(serviciosDataElement.textContent) : [];
+            console.log('Servicios cargados inicialmente (después de parsear):', allServicios);
+            const map = L.map('mapid').setView([10.5062, -66.914], 15); // Nivel de zoom 15 para un detalle razonable de la parroquia
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            const serviceColors = {
+                'Bancos': 'darkorange',
+                'Bibliotecas': 'blue',
+                'CDI': 'purple',
+                'Comercios': 'orange',
+                'Edificios Habitacionales': 'gray',
+                'Entes Goubernamentales': 'darkgreen',
+                'Hoteles': 'red',
+                'Farmacias': 'green',
+                'Lugares Turísticos/Culturales': 'teal',
+                'Módulos Policiales': 'darkblue',
+                'Tiendas': 'brown',
+                'Panaderias': 'gold',
+                'Todos': 'black'
+            };
+
+            let currentMarkers = [];
+
+            const serviceFilterSelect = document.getElementById('service-filter');
+            const serviceInfoPanel = document.getElementById('service-info-panel');
+
+            function populateServiceFilter() {
+                console.log('--- populateServiceFilter() called ---');
+                const serviceTypes = new Set();
+                allServicios.forEach(s => serviceTypes.add(s.servicio));
+                
+                console.log('Service types found:', Array.from(serviceTypes));
+
+                while (serviceFilterSelect.options.length > 1) {
+                    serviceFilterSelect.remove(1);
+                }
+
+                const sortedServiceTypes = Array.from(serviceTypes).sort();
+
+                sortedServiceTypes.forEach(type => {
+                    const option = document.createElement('option');
+                    option.value = type;
+                    option.textContent = type;
+                    serviceFilterSelect.appendChild(option);
+                    console.log('Option added to filter:', type);
+                });
+                console.log('--- populateServiceFilter() finished ---');
+            }
+
+            function clearMarkers() {
+                console.log('Clearing', currentMarkers.length, 'markers.');
+                currentMarkers.forEach(marker => map.removeLayer(marker));
+                currentMarkers = [];
+            }
+
+            function addMarkers(serviciosToAdd) {
+                console.log('--- addMarkers() called with', serviciosToAdd.length, 'services ---');
+                clearMarkers();
+                let bounds = new L.LatLngBounds(); 
+
+                serviciosToAdd.forEach(function(servicio) {
+                    console.log('Processing service:', servicio.nombre, 'Type:', servicio.servicio);
+
+                    const lat = parseFloat(servicio.latitud);
+                    const lon = parseFloat(servicio.longitud);
+                    
+                    console.log('Parsed coordinates:', 'Lat:', lat, 'Lon:', lon, 'isNaN(lat):', isNaN(lat), 'isNaN(lon):', isNaN(lon)); 
+
+                    if (!isNaN(lat) && !isNaN(lon)) {
+                        const markerColor = serviceColors[servicio.servicio] || '#777777'; 
+
+                        const customIcon = L.divIcon({
+                            className: 'custom-div-icon',
+                            html: `<div style="background-color:${markerColor}; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>`,
+                            iconSize: [24, 24],
+                            iconAnchor: [12, 24]
+                        });
+
+                        const marker = L.marker([lat, lon], {icon: customIcon}).addTo(map);
+                        console.log('Marker added to map for:', servicio.nombre);
+                        
+                        marker.bindPopup(`<b>${servicio.nombre}</b><br>${servicio.servicio}`);
+
+                        marker.on('mouseover', function (e) {
+                            serviceInfoPanel.innerHTML = `
+                                <p><strong>Nombre:</strong> ${servicio.nombre}</p>
+                                <p><strong>Tipo:</strong> ${servicio.servicio}</p>
+                                <p><strong>Latitud:</strong> ${servicio.latitud}</p>
+                                <p><strong>Longitud:</strong> ${servicio.longitud}</p>
+                            `;
+                        });
+
+                        marker.on('mouseout', function (e) {
+                            serviceInfoPanel.innerHTML = `<p>Pasa el cursor sobre un marcador para ver sus detalles.</p>`;
+                        });
+
+                        currentMarkers.push(marker);
+                        bounds.extend([lat, lon]); 
+                    } else {
+                        console.warn(`Coordenadas inválidas para el servicio: ${servicio.nombre} - Lat: "${servicio.latitud}", Lon: "${servicio.longitud}"`);
+                    }
+                });
+
+                if (currentMarkers.length > 0) {
+                    map.fitBounds(bounds, { padding: [50, 50] }); 
+                    console.log('Map adjusted to fit bounds of', currentMarkers.length, 'markers.');
+                } else {
+                    map.setView([10.5062, -66.914], 15);
+                    console.log('No markers to display. Map centered on Parroquia Catedral.'); 
+                }
+                console.log('--- addMarkers() finished ---');
+            }
+
+            serviceFilterSelect.addEventListener('change', function() {
+                console.log('Filter changed to:', this.value);
+                const selectedServiceType = this.value;
+                
+                let filteredServicios = [];
+                if (selectedServiceType === 'Todos') {
+                    filteredServicios = allServicios;
+                } else {
+                    filteredServicios = allServicios.filter(servicio => servicio.servicio === selectedServiceType);
+                }
+                addMarkers(filteredServicios);
+            });
+
+            window.onload = function() {
+                console.log('window.onload triggered.');
+                map.invalidateSize();
+                populateServiceFilter();
+                addMarkers(allServicios); 
+                console.log('Final markers in currentMarkers array:', currentMarkers);
+            };
+
+        </script>
+        <script>
+            const botonMover = document.getElementById('sidebuton');
+            const cajaAMover = document.getElementById('sidebar');
+
+            let estaAbierto = false;
+
+            const posicionCerradoCaja = -110;
+            const posicionAbiertoCaja = 0;
+
+            const posicionCerradoBoton = 0;
+            const posicionAbiertoBoton = 300;
+
+            cajaAMover.style.left = `${posicionCerradoCaja}px`;
+            botonMover.style.left = `${posicionCerradoBoton}px`;
+
+            botonMover.addEventListener('click', () => {
+                if (!estaAbierto) {
+                    cajaAMover.style.left = `${posicionAbiertoCaja}px`;
+                    cajaAMover.style.width = `300px`;
+                    botonMover.style.left = `${posicionAbiertoBoton}px`;
+                    botonMover.style.transform = `rotate(90deg)`;
+                    estaAbierto = true;
+                } else {
+                    cajaAMover.style.left = `${posicionCerradoCaja}px`;
+                    cajaAMover.style.width = `110px`;
+                    botonMover.style.left = `${posicionCerradoBoton}px`;
+                    botonMover.style.transform = `rotate(270deg)`;
+                    estaAbierto = false;
+                }
+            });
+        </script>
+    </body>
+</html>
+
