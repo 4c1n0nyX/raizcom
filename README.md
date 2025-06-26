@@ -142,7 +142,9 @@ Esta guía detalla los pasos para instalar y desplegar la aplicación en un ento
     # Recolecta los archivos estáticos
     python manage.py collectstatic
     ```
-
+6.  **Modificar API KEY de OpenWeatherMap:**
+    Edita el archivo `app/settings.py` y modifica la variable `OPENWEATHER_API_KEY` con la KEY que genera OpenWeatherMap. Para ello debes registrarte en https://openweathermap.org/
+    
 ### **Fase 4: Puesta en Marcha y Configuración Inicial**
 
 1.  **Crear los Grupos de Roles:**
