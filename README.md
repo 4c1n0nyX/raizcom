@@ -113,7 +113,7 @@ Esta guía detalla los pasos para instalar y desplegar la aplicación en un ento
 
 1.  **Clonar el Repositorio:**
     ```bash
-    git clone [https://github.com/4c1n0nyX/raizcom.git](https://github.com/4c1n0nyX/raizcom.git) /opt/RAIZCOM
+    git clone https://github.com/4c1n0nyX/raizcom.git /opt/RAIZCOM
     cd /opt/RAIZCOM
     ```
 
