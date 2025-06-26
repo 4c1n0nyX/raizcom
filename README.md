@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/4c1n0nyX/raizcom/blob/main/staticfiles/img/BANNER.jpg" alt="Logo RaízCom" width="500" border-radius="100"/>
+  <img src="https://github.com/4c1n0nyX/raizcom/blob/main/staticfiles/img/BANNER.jpg" alt="Logo RaízCom" width="500"/>
 </p>
 
 <h1 align="center">RaízCom - La Comunidad Móvil</h1>
