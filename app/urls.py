@@ -7,7 +7,6 @@ urlpatterns = [
     path('contactos/', include('agenda.urls')),
     path('usuarios/', include('usuarios.urls')),
     path('servicios/', include('servicios.urls')),
-    path('solicitudes/', include('solicitudes.urls')),
     path('publicaciones/', include('publicaciones.urls')),
     path('chat/', include('chat.urls')),
 ]
