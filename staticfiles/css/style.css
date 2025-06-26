@@ -250,7 +250,14 @@ textarea{
 
 .iconojo{
     font-size: 10px;
-  }
+}
+
+.user-order{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
 
 /* =============== MÓDULOS DE BUSQUEDA ============== */
 
