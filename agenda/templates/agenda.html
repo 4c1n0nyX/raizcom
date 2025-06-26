@@ -104,7 +104,7 @@
                         <h2>Solicitudes de Contacto Recibidas (Pendientes)</h2>
                         {% for req in received_requests_pending %}
                             <div style="display: flex; flex-wrap: wrap; padding: 20px; background-color: rgb(235, 234, 234); width: 100%; margin-top: 10px; border-radius: 15px; align-items: center;">
-                                <div style="display: flex; flex-wrap: wrap; align-items: center;">
+                                <div class="user-order">
                                     {% if contact.contact_user.foto %}
                                         <img src="{{ contact.contact_user.foto.url }}" style="width: 70px; height: 70px; border-radius: 70px; border: 2px solid black;">
                                     {% else %}
@@ -216,7 +216,7 @@
                     <h2>Mis Solicitudes de Contacto Enviadas (Pendientes)</h2>
                     {% for req in sent_requests_pending %}
                         <div style="display: flex; flex-wrap: wrap; padding: 20px; background-color: rgb(235, 234, 234); width: 100%; margin-top: 10px; border-radius: 15px; align-items: center;">
-                            <div style="display: flex; flex-wrap: wrap; align-items: center;">
+                            <div class="user-order">
                                 {% if contact.contact_user.foto %}
                                     <img src="{{ contact.contact_user.foto.url }}" style="width: 70px; height: 70px; border-radius: 70px; border: 2px solid black;">
                                 {% else %}
@@ -282,7 +282,7 @@
                 <div class="table-container" style="height: auto;">
                     {% for contact in contactos %}
                         <div style="display: flex; flex-wrap: wrap; padding: 20px; background-color: rgb(235, 234, 234); width: 100%; margin-top: 10px; border-radius: 15px; align-items: center;">
-                            <div style="display: flex; flex-wrap: wrap; align-items: center;">
+                            <div class="user-order">
                                 {% if contact.contact_user.foto %}
                                     <img src="{{ contact.contact_user.foto.url }}" style="width: 70px; height: 70px; border-radius: 70px; border: 2px solid black;">
                                 {% else %}
