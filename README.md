@@ -176,8 +176,6 @@ Esta guía detalla los pasos para instalar y desplegar la aplicación en un ento
 
 ## 🖼️ Galería
 
-*Aquí puedes añadir capturas de pantalla de tu aplicación.*
-
 | Inicio de Sesión | Dashboard Principal | Mapa de Servicios |
 | :---: | :---: | :---: |
 | *<img src="https://github.com/4c1n0nyX/raizcom/blob/main/staticfiles/img/LOGIN.jpg">* | *<img src="https://github.com/4c1n0nyX/raizcom/blob/main/staticfiles/img/DASHBOARD.jpg">* | *<img src="https://github.com/4c1n0nyX/raizcom/blob/main/staticfiles/img/SERVICIOS.jpg">* |
